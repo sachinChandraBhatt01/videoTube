@@ -28,7 +28,7 @@ const AllVideosPage = () => {
 
   // Get duration for each video
   useEffect(() => {
-    if (Array.isArray(allVideoData) && allVideoData.length > 0) {
+    if (Array.isArray(allVideoData) && allVideoData?.length > 0) {
       allVideoData.forEach((video) => {
         getVideoDuration(video.videoUrl, (formattedTime) => {
           setDurations((prev) => ({

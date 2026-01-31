@@ -434,14 +434,14 @@ const WatchVideoPage = () => {
               icon={FaThumbsUp}
               active={video?.likes.includes(userData?._id)}
               label="Like"
-              count={video?.likes.length}
+              count={video?.likes?.length}
               onClick={handleLike}
             />
             <IconButton
               icon={FaThumbsDown}
               active={video?.dislikes.includes(userData?._id)}
               label="Dislike"
-              count={video?.dislikes.length}
+              count={video?.dislikes?.length}
               onClick={handleDislike}
             />
             <IconButton

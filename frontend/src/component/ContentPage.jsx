@@ -238,8 +238,8 @@ const handleDeletePost = async (postId) => {
                           className="w-20 h-12 rounded object-cover"
                         />
                       </td>
-                      <td className="p-3 text-start">{p.title}</td>
-                      <td className="p-3 text-start">{p.videos?.length || 0}</td>
+                      <td className="p-3 text-start">{p?.title}</td>
+                      <td className="p-3 text-start">{p?.videos?.length || 0}</td>
                       <td className="p-3">
                         <FaEdit className="cursor-pointer hover:text-blue-400" onClick={() =>
                             navigate(`/ptstudio/manageplaylist/${p._id}`)

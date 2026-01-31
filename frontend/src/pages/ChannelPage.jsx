@@ -103,11 +103,11 @@ export default function ChannelPage() {
           </h1>
           <p className="text-gray-400 mt-1">
             <span className="font-semibold text-white">
-              {channel.subscribers?.length || 0}
+              {channel?.subscribers?.length || 0}
             </span>{" "}
             subscribers ·{" "}
             <span className="font-semibold text-white">
-              {channel.videos?.length || 0}
+              {channel?.videos?.length || 0}
             </span>{" "}
             videos
           </p>

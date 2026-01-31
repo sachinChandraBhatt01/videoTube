@@ -40,10 +40,10 @@ const SearchResults = ({ searchResults }) => {
 
   // ✅ Agar sab empty hai
   const isEmpty =
-    (!searchResults?.videos || searchResults.videos.length === 0) &&
-    (!searchResults?.shorts || searchResults.shorts.length === 0) &&
-    (!searchResults?.channels || searchResults.channels.length === 0) &&
-    (!searchResults?.playlists || searchResults.playlists.length === 0);
+    (!searchResults?.videos || searchResults?.videos?.length === 0) &&
+    (!searchResults?.shorts || searchResults?.shorts?.length === 0) &&
+    (!searchResults?.channels || searchResults?.channels?.length === 0) &&
+    (!searchResults?.playlists || searchResults?.playlists?.length === 0);
 
   return (
     <div className="px-6 py-4 bg-[#00000051] border-1 border-gray-800 mb-[20px]">

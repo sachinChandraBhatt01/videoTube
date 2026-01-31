@@ -178,8 +178,8 @@ function Home() {
       let channelVideos = [];
       let channelShorts = [];
       channels.forEach((ch) => {
-        if (ch.videos?.length) channelVideos.push(...ch.videos);
-        if (ch.shorts?.length) channelShorts.push(...ch.shorts);
+        if (ch?.videos?.length) channelVideos.push(...ch.videos);
+        if (ch?.shorts?.length) channelShorts.push(...ch.shorts);
       });
 
       setFilterData({

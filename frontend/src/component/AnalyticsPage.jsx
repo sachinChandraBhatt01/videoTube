@@ -24,13 +24,13 @@ const AnalyticsPage = () => {
 
   // ------------------- Video Chart Data -------------------
   const videoChartData = (channelData.videos || []).map((video) => ({
-    title: video.title.length > 10 ? video.title.slice(0, 10) + "..." : video.title, // short title for x-axis
+    title: video?.title?.length > 10 ? video.title.slice(0, 10) + "..." : video.title, // short title for x-axis
     views: video.views || 0,
   }));
 
   // ------------------- Shorts Chart Data -------------------
   const shortChartData = (channelData.shorts || []).map((short) => ({
-    title: short.title.length > 10 ? short.title.slice(0, 10) + "..." : short.title,
+    title: short?.title?.length > 10 ? short.title.slice(0, 10) + "..." : short.title,
     views: short.views || 0,
   }));
 

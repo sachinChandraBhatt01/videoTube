@@ -48,7 +48,7 @@ const RecommendationContent = () => {
     });
   }, [recommendationData]);
 
-  if (!allVideos.length && !allShorts.length) {
+  if (!allVideos?.length && !allShorts?.length) {
     return null; // Agar kuch bhi data nahi hai
   }
 
@@ -57,11 +57,11 @@ const RecommendationContent = () => {
 
 
       {/* 🔹 Videos Section */}
-      {allVideos.length > 0 && (
+      {allVideos?.length > 0 && (
         <div>
           
           <div className="flex flex-wrap gap-6 mb-12">
-            {allVideos.map((video) => (
+            {allVideos?.map((video) => (
               <VideoCard
                 key={video._id}
                 thumbnail={video.thumbnail}
@@ -79,11 +79,11 @@ const RecommendationContent = () => {
       )}
 
       {/* 🔹 Shorts Section */}
-      {allShorts.length > 0 && (
+      {allShorts?.length > 0 && (
         <div className="mt-8">
           <h3 className="text-xl font-bold mb-4 flex items-center gap-1"><SiYoutubeshorts className="w-6 h-6 text-red-600" />Shorts</h3>
           <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-            {allShorts.map((short) => (
+            {allShorts?.map((short) => (
               <div key={short._id} className="flex-shrink-0">
                 <ShortsCard
                   shortUrl={short.shortUrl}

@@ -131,7 +131,7 @@ const SavedContentPage = () => {
         Saved Shorts
       </h2>
       <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-        {savedShorts.length > 0 ? (
+        {savedShorts?.length > 0 ? (
           savedShorts.map((short) => (
             <div key={short._id} className="flex-shrink-0">
               <ShortsCard
@@ -155,7 +155,7 @@ const SavedContentPage = () => {
         Saved Videos
       </h2>
       <div className="flex flex-wrap gap-6 mb-12">
-        {savedVideos.length > 0 ? (
+        {savedVideos?.length > 0 ? (
           savedVideos.map((video) => (
             <VideoCard
               key={video._id}

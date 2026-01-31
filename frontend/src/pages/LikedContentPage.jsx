@@ -72,7 +72,7 @@ const LikedContentPage = () => {
     <div className="px-6 py-4 min-h-screen mt-[50px] lg:mt-[20px]">
 
       {/* Shorts Section */}
-      {likedShorts.length > 0 && (
+      {likedShorts?.length > 0 && (
         <>
           <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-300 pb-2 flex items-center gap-2">
             <SiYoutubeshorts className="w-7 h-7 text-red-600" />
@@ -96,7 +96,7 @@ const LikedContentPage = () => {
       )}
 
       {/* Videos Section */}
-      {likedVideos.length > 0 && (
+      {likedVideos?.length > 0 && (
         <>
           <h2 className="text-2xl font-bold mb-6 pt-[50px] border-b border-gray-300 pb-2 flex items-center gap-2">
             <img src={logo} className="w-7 h-7" alt="" />
@@ -121,7 +121,7 @@ const LikedContentPage = () => {
       )}
 
       {/* ✅ If nothing liked at all */}
-      {likedShorts.length === 0 && likedVideos.length === 0 && (
+      {likedShorts?.length === 0 && likedVideos?.length === 0 && (
         <p className="mt-10 text-lg">You haven't liked any videos or shorts yet.</p>
       )}
     </div>

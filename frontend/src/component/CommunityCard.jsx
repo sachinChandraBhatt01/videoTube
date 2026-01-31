@@ -10,7 +10,7 @@ export default function CommunityCard({ post }) {
   const [liked, setLiked] = useState(
     post.likes?.some((u) => u === userData._id || u._id === userData._id)
   );
-  const [likeCount, setLikeCount] = useState(post.likes?.length || 0);
+  const [likeCount, setLikeCount] = useState(post?.likes?.length || 0);
   const [showComments, setShowComments] = useState(false);
   const [newComment, setNewComment] = useState("");
   const [commentList, setCommentList] = useState(post.comments || []);
@@ -23,7 +23,7 @@ export default function CommunityCard({ post }) {
         { postId: post._id },
         { withCredentials: true }
       );
-      setLikeCount(res.data.likes.length);
+      setLikeCount(res?.data?.likes?.length);
       setLiked(res.data.likes.includes(userData._id));
     } catch (error) {
       console.log(error);
@@ -96,7 +96,7 @@ export default function CommunityCard({ post }) {
             className="flex items-center gap-2 hover:text-blue-400 cursor-pointer transition"
             onClick={() => setShowComments(!showComments)}
           >
-            <FaComment /> {commentList.length}
+            <FaComment /> {commentList?.length || 0}
           </span>
         </div>
       </div>
@@ -116,7 +116,7 @@ export default function CommunityCard({ post }) {
 
           {/* Show Comments */}
           <div className="space-y-4">
-            {commentList.length > 0 ? (
+            {commentList?.length > 0 ? (
               [...commentList].reverse().map((c) => (
                 <div key={c._id} className="bg-gray-700 p-3 rounded-lg">
                   {/* Author Info */}
@@ -135,7 +135,7 @@ export default function CommunityCard({ post }) {
                   <p className="text-gray-200 ml-8">{c.message}</p>
 
                   {/* Replies */}
-                  {c.replies?.length > 0 && (
+                  {c?.replies?.length > 0 && (
                     <div className="mt-2 ml-12 space-y-2">
                       {[...c.replies].reverse().map((r) => (
                         <div key={r._id} className="flex items-start gap-2">

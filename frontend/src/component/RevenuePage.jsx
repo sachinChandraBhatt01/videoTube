@@ -40,13 +40,13 @@ const RevenuePage = () => {
 
   // ------------------- Videos Revenue Data -------------------
   const videoRevenueData = (channelData.videos || []).map((video) => ({
-    title: video.title.length > 10 ? video.title.slice(0, 15) + "..." : video.title,
+    title: video?.title?.length > 10 ? video.title.slice(0, 15) + "..." : video.title,
     revenue: calculateRevenue(video.views || 0, "video"),
   }));
 
   // ------------------- Shorts Revenue Data -------------------
   const shortRevenueData = (channelData.shorts || []).map((short) => ({
-    title: short.title.length > 10 ? short.title.slice(0, 15) + "..." : short.title,
+    title: short?.title?.length > 10 ? short.title.slice(0, 15) + "..." : short.title,
     revenue: calculateRevenue(short.views || 0, "short"),
   }));
 

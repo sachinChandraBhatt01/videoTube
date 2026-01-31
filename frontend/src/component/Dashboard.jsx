@@ -46,7 +46,7 @@ function Dashboard() {
         <div className="text-center sm:text-left">
           <h2 className="text-lg sm:text-xl font-bold">{channelData.name}</h2>
           <p className="text-gray-400 text-sm">
-            {channelData.subscribers?.length || 0} Total subscribers
+            {channelData?.subscribers?.length || 0} Total subscribers
           </p>
         </div>
       </div>
@@ -66,7 +66,7 @@ function Dashboard() {
           <AnalyticsCard
             
             label="Subscribers"
-            value={`+${channelData.subscribers?.length || 0}`}
+            value={`+${channelData?.subscribers?.length || 0}`}
           />
           <AnalyticsCard
            

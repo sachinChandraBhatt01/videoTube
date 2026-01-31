@@ -35,7 +35,7 @@ const Shorts = () => {
 
   // Shuffle shorts randomly once when component mounts
   useEffect(() => {
-    if (!allShortData || allShortData.length === 0) return;
+    if (!allShortData || allShortData?.length === 0) return;
 
     const shuffled = [...allShortData].sort(() => Math.random() - 0.5);
     setShortsList(shuffled);
@@ -236,7 +236,7 @@ const Shorts = () => {
     }
   };
 
-  if (shortsList.length > 0) {
+  if (shortsList?.length > 0) {
     addHistory();
   }
 }, [activeIndex, shortsList]);

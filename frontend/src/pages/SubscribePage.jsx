@@ -30,7 +30,7 @@ const SubscribePage = () => {
 
   // Step 1: get video durations
   useEffect(() => {
-    if (Array.isArray(subscribeVideo) && subscribeVideo.length > 0) {
+    if (Array.isArray(subscribeVideo) && subscribeVideo?.length > 0) {
       subscribeVideo.forEach((video) => {
         getVideoDuration(video.videoUrl, (formattedTime) => {
           setDurations((prev) => ({

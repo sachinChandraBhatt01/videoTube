@@ -5,7 +5,7 @@ const Description = ({ text }) => {
 
   if (!text) return null; // Agar text nahi hai toh kuch bhi show na ho
 
-  const showButton = text.length > 100;
+  const showButton = text?.length > 100;
 
   return (
     <div>

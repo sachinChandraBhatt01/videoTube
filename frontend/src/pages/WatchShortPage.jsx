@@ -42,7 +42,7 @@ const WatchShortPage = () => {
 
   // Arrange shorts
   useEffect(() => {
-    if (!allShortData || allShortData.length === 0) return;
+    if (!allShortData || allShortData?.length === 0) return;
 
     if (selectedShort) {
       const selected = recommendationData?.recommendedVideos.find(

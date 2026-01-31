@@ -27,7 +27,7 @@ const HistoryPage = () => {
 
   // ✅ calculate durations for videos
   useEffect(() => {
-    if (Array.isArray(videoHistory) && videoHistory.length > 0) {
+    if (Array.isArray(videoHistory) && videoHistory?.length > 0) {
       videoHistory.forEach((item) => {
         const video = item.contentId; // ✅ actual video object
         getVideoDuration(video.videoUrl, (formattedTime) => {

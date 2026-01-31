@@ -35,7 +35,7 @@ export default function SavedPlaylistPage() {
     );
   }
 
-  if (!playlists || playlists.length === 0) {
+  if (!playlists || playlists?.length === 0) {
     return (
       <div className="flex justify-center items-center h-[70vh] text-gray-400 text-xl">
         No saved playlists found

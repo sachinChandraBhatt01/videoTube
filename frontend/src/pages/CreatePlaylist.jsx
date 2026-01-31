@@ -32,7 +32,7 @@ const CreatePlaylist = () => {
       showCustomAlert("Playlist title is required!");
       return;
     }
-    if (selectedVideos.length === 0) {
+    if (selectedVideos?.length === 0) {
       showCustomAlert("Please select at least one video");
       return;
     }

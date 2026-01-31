@@ -56,7 +56,7 @@ export default function PlaylistCard({ id, title, videos, savedBy }) {
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex flex-col justify-end p-3">
           <h3 className="font-semibold text-white truncate">{title}</h3>
-          <p className="text-sm text-gray-300">{videos.length} videos</p>
+          <p className="text-sm text-gray-300">{videos?.length} videos</p>
         </div>
 
         {/* ✅ Save Icon (top-right) */}
