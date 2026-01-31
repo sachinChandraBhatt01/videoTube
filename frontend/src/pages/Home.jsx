@@ -148,10 +148,10 @@ function Home() {
       } = result.data;
 
       if (
-        videos.length > 0 ||
-        shorts.length > 0 ||
-        playlists.length > 0 ||
-        channels.length > 0
+        videos?.length > 0 ||
+        shorts?.length > 0 ||
+        playlists?.length > 0 ||
+        channels?.length > 0
       ) {
         speak("These are the top search results I found for you");
       } else {
@@ -197,10 +197,10 @@ function Home() {
       });
 
       if (
-        videos.length > 0 ||
-        shorts.length > 0 ||
-        channelVideos.length > 0 ||
-        channelShorts.length > 0
+        videos?.length > 0 ||
+        shorts?.length > 0 ||
+        channelVideos?.length > 0 ||
+        channelShorts?.length > 0
       ) {
         speak(`Here are some ${category} videos and shorts for you`);
       } else {
