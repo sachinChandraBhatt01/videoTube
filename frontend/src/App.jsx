@@ -35,7 +35,7 @@ import ManagePlaylist from "./pages/ManagePlaylist";
 import RevenuePage from "./component/RevenuePage";
 import UseGetSubscribedContent from "./customHooks/UseGetSubscribedContent";
 import UsegetChannel from "./customHooks/UsegetChannel";
-import UsegetCurrentUser from "./customHooks/UsegetCurrentUserr";
+import UsegetCurrentUser from "./customHooks/UsegetCurrentUser";
 import UsegetChannelContent from "./customHooks/UsegetChannelContent";
 import UseGetHistroy from "./customHooks/UseGetHistroyy";
 import UseGetRecommendation from "./customHooks/UseGetRecommendation";
