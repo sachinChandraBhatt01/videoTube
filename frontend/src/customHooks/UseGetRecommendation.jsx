@@ -5,8 +5,8 @@ import { serverUrl } from "../App";
 import axios from "axios";
 import { setRecommendationData } from "../redux/contentSlice";
 
-const useGetRecommendation = (userData) => {
-  const dispatch = useDispatch();
+const UseGetRecommendation = (userData) => {
+   const dispatch = useDispatch();
  const { recommendationRefresh } = useSelector(
     (state) => state.content
   );
@@ -28,6 +28,6 @@ const useGetRecommendation = (userData) => {
   }, [dispatch , recommendationRefresh , userData]);
 
   return null; // hook kuch render nahi karega
-};
+}
 
-export default useGetRecommendation;
+export default UseGetRecommendation

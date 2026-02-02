@@ -4,7 +4,7 @@ import { setSubscribeChannel, setSubscribeVideo, setSubscribeShort } from "../re
 import axios from "axios";
 import { serverUrl } from "../App";
 
-const useGetSubscribedContent = (userData) => {
+const UseGetSubscribedContent = (userData) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -35,6 +35,6 @@ const useGetSubscribedContent = (userData) => {
 
     fetchSubscribedContent();
   }, [dispatch , userData]);
-};
+}
 
-export default useGetSubscribedContent;
+export default UseGetSubscribedContent

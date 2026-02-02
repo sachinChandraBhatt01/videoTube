@@ -4,7 +4,7 @@ import { setVideoData } from '../redux/contentSlice';
 import { serverUrl } from '../App';
 import axios from 'axios';
 
-const useGetChannelContent = (userData) => {
+const UsegetChannelContent = (userData) => {
   const dispatch = useDispatch()
   const {channelData} = useSelector(state=>state.user)
   useEffect(() => {
@@ -28,4 +28,4 @@ const useGetChannelContent = (userData) => {
   
 }
 
-export default useGetChannelContent
+export default UsegetChannelContent

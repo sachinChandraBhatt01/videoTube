@@ -33,13 +33,22 @@ import ManageVideo from "./pages/ManageVideo";
 import ManageShort from "./pages/ManageShort";
 import ManagePlaylist from "./pages/ManagePlaylist";
 import RevenuePage from "./component/RevenuePage";
-import useGetCurrentUser from "./customHooks/UsegetCurrentUser.jsx";
-import useGetAllContentData from "./customHooks/useGetAllContentData.jsx";
-import useGetChannel from "./customHooks/useGetChannel.jsx";
-import useGetChannelContent from "./customHooks/useGetChannelContent.jsx";
-import useGetSubscribedContent from "./customHooks/useGetSubscribedContent.jsx";
-import useGetHistory from "./customHooks/useGetHistroy.jsx";
-import useGetRecommendation from "./customHooks/useGetRecommendation.jsx";
+// import useGetCurrentUser from "./customHooks/UsegetCurrentUser.jsx";
+// import useGetAllContentData from "./customHooks/useGetAllContentData.jsx";
+// import useGetChannel from "./customHooks/useGetChannel.jsx";
+// import useGetChannelContent from "./customHooks/useGetChannelContent.jsx";
+// import useGetSubscribedContent from "./customHooks/useGetSubscribedContent.jsx";
+// import useGetHistory from "./customHooks/useGetHistroy.jsx";
+// import useGetRecommendation from "./customHooks/useGetRecommendation.jsx";
+
+import UsegetAllContentData from "./customHooks/useGetAllContentData1";
+import UseGetChannel from "./customHooks/useGetChannel2";
+import UseGetChannelContent from "./customHooks/useGetChannelContent3";
+import UseGetCurrentUser from "./customHooks/useGetCurrentUser4";
+import UseGetHistory from "./customHooks/useGetHistory";
+import UseGetRecommendation from "./customHooks/useGetRecommendation6";
+import UseGetSubscribedContent from "./customHooks/useGetSubscribedContent1";
+
 
 export const serverUrl =
   import.meta.env.VITE_BACKEND_URI || "http://localhost:8000";
@@ -55,14 +64,14 @@ const ProtectedRoute = ({ userData, children }) => {
 function App() {
   const { userData } = useSelector((state) => state.user);
 
-  useGetAllContentData();
-  useGetCurrentUser();
+  UsegetAllContentData();
+  UseGetCurrentUser();
 
-  useGetChannel(userData);
-  useGetChannelContent(userData);
-  useGetSubscribedContent(userData);
-  useGetHistory(userData);
-  useGetRecommendation(userData);
+  UseGetChannel(userData);
+  UseGetChannelContent(userData);
+  UseGetSubscribedContent(userData);
+  UseGetHistory(userData);
+  UseGetRecommendation(userData);
 
   function ChannelPageWrapper() {
     const location = useLocation();

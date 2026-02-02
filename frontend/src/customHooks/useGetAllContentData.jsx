@@ -4,8 +4,8 @@ import { setAllPostData, setAllShortData, setAllVideoData  } from '../redux/cont
 import { serverUrl } from '../App';
 import axios from 'axios';
 
-const useGetAllContentData = () => {
-  const dispatch = useDispatch()
+const UsegetAllContentData = () => {
+   const dispatch = useDispatch();
   
   useEffect(() => {
       const fetchAllVideos = async () => {
@@ -22,7 +22,7 @@ const useGetAllContentData = () => {
         }
       };
       fetchAllVideos();
-    }, []);
+    }, [dispatch]);
      useEffect(() => {
       const fetchAllShorts = async () => {
         
@@ -38,7 +38,7 @@ const useGetAllContentData = () => {
         }
       };
       fetchAllShorts();
-    }, []);
+    }, [dispatch]);
 
     useEffect(() => {
       const fetchAllPosts = async () => {
@@ -55,8 +55,7 @@ const useGetAllContentData = () => {
         }
       };
       fetchAllPosts();
-    }, []);
-  
+    }, [dispatch]);
 }
 
-export default useGetAllContentData
+export default UsegetAllContentData
