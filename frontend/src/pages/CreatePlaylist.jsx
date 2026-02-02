@@ -49,7 +49,7 @@ const CreatePlaylist = () => {
         },
         { withCredentials: true },
       );
-      console.log(res.data);
+      // console.log(res.data);
       // Update Redux channel data with new playlist
       const updatedChannel = {
         ...channelData,

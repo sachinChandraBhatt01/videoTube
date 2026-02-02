@@ -40,7 +40,7 @@ const CreateChannelFlow = () => {
     setLoading(true)
     try {
       const result = await axios.post(serverUrl + "/api/user/create-channel" ,formData , {withCredentials:true})
-      console.log(result)
+      // console.log(result)
       showCustomAlert("Channel Created")
       dispatch(setChannelData(result.data))
       navigate("/")

@@ -18,7 +18,7 @@ const UsegetChannelContent = (userData) => {
             { withCredentials: true }
           );
           dispatch(setVideoData(res.data.videos || []));
-          console.log(res.data.videos)
+          // console.log(res.data.videos)
         } catch (err) {
           console.error(err);
         }

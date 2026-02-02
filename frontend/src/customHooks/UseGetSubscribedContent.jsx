@@ -22,7 +22,7 @@ const UseGetSubscribedContent = (userData) => {
         dispatch(setSubscribeVideo(videos || []));
         dispatch(setSubscribeShort(shorts || []));
 
-        console.log("Subscribed Content:", result.data);
+        console.log("Subscribed Content:");
       } catch (error) {
         console.error("Error fetching subscribed content:", error);
 

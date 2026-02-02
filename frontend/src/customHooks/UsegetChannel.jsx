@@ -11,7 +11,7 @@ const UsegetChannel = () => {
     try {
         const result = await axios.get(serverUrl + "/api/user/getchannel" , {withCredentials:true})
         dispatch(setChannelData(result.data))
-        console.log(result.data)
+        // console.log(result.data)
     } catch (error) {
         console.log(error)
         dispatch(setChannelData([]))
@@ -25,7 +25,7 @@ const UsegetChannel = () => {
     try {
         const result = await axios.get(serverUrl + "/api/user/getallchannel" , {withCredentials:true})
         dispatch(setAllChannelData(result.data))
-        console.log(result.data)
+        // console.log(result.data)
     } catch (error) {
         console.log(error)
         dispatch(setAllChannelData([]))

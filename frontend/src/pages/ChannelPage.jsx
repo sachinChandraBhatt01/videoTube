@@ -43,7 +43,7 @@ export default function ChannelPage() {
         { channelId: channel._id },
         { withCredentials: true },
       );
-      console.log(res.data);
+      // console.log(res.data);
       setLoading(false);
       // ✅ Agar API sirf subscribers return kar rahi hai
       if (res.data?.subscribers) {

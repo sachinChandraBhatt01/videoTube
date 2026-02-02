@@ -16,7 +16,7 @@ const UsegetAllContentData = () => {
             { withCredentials: true }
           );
           dispatch(setAllVideoData(res.data || []));
-          console.log(res.data)
+          // console.log(res.data)
         } catch (err) {
           console.error(err);
         }
@@ -32,7 +32,7 @@ const UsegetAllContentData = () => {
             { withCredentials: true }
           );
           dispatch(setAllShortData(res.data || []));
-          console.log(res.data)
+          // console.log(res.data)
         } catch (err) {
           console.error(err);
         }
@@ -49,7 +49,7 @@ const UsegetAllContentData = () => {
             { withCredentials: true }
           );
           dispatch(setAllPostData(res.data || []));
-          console.log(res.data)
+          // console.log(res.data)
         } catch (err) {
           console.error(err);
         }

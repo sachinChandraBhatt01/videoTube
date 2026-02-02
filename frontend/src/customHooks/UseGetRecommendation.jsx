@@ -18,7 +18,7 @@ const UseGetRecommendation = (userData) => {
           { withCredentials: true }
         );
         dispatch(setRecommendationData(res.data))
-        console.log("Recommendation data:", res.data);
+        console.log("Recommendation data:");
       } catch (err) {
         console.error("Recommendation fetch error:", err);
       }

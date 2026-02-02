@@ -28,7 +28,7 @@ export default function PlaylistCard({ id, title, videos, savedBy }) {
         { withCredentials: true }
       );
 
-      console.log("Save toggle response:", res.data);
+      // console.log("Save toggle response:", res.data);
 
       // Agar current user saved list me hai to isSaved true, warna false
       const saved = res.data.saveBy?.some(

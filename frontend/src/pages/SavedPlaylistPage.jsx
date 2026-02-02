@@ -15,7 +15,7 @@ export default function SavedPlaylistPage() {
         const res = await axios.get(`${serverUrl}/api/content/saveplaylist`, {
           withCredentials: true,
         });
-        console.log("Saved playlists:", res.data);
+        console.log("Saved playlists:");
         setPlaylists(res.data);
       } catch (err) {
         console.error("Error fetching saved playlists:", err);

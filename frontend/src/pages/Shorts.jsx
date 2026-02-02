@@ -230,7 +230,7 @@ const Shorts = () => {
         { contentId: shortId, contentType: "Short" }, // ✅
         { withCredentials: true }
       );
-      console.log(res.data)
+      // console.log(res.data)
     } catch (err) {
       console.error("Error adding short history:", err);
     }

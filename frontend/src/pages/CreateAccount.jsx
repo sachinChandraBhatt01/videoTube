@@ -69,7 +69,7 @@ const CreateAccount = () => {
 
     try {
       const result = await axios.post(serverUrl + "/api/auth/signup", formData, { withCredentials: true });
-      console.log(result.data);
+      // console.log(result.data);
       setLoading(false);
       navigate("/");
        dispatch(setUserData(result.data))

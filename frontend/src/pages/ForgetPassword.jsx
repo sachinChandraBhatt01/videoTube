@@ -19,7 +19,7 @@ function ForgetPassword() {
         setLoading(true)
         try {
             const result = await axios.post(serverUrl + "/api/auth/sendotp" , {email} , {withCredentials:true})
-            console.log(result.data)
+            // console.log(result.data)
             setLoading(false)
             setStep(2)
             showCustomAlert(result.data.message)
@@ -37,7 +37,7 @@ function ForgetPassword() {
         setLoading(true)
         try {
             const result = await axios.post(serverUrl + "/api/auth/verifyotp",{email , otp} , {withCredentials:true})
-            console.log(result.data)
+            // console.log(result.data)
             setLoading(false)
             setStep(3)
             showCustomAlert(result.data.message) 
@@ -61,7 +61,7 @@ function ForgetPassword() {
             }
             
             const result = await axios.post(serverUrl + "/api/auth/resetpassword" , {email , password:newPassword} ,{withCredentials:true})
-             console.log(result.data)
+            //  console.log(result.data)
             setLoading(false)
             navigate("/signin")
             showCustomAlert(result.data.message) 

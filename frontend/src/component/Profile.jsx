@@ -23,7 +23,7 @@ const Profile = () => {
   const handleSignOut = async () => {
         try {
             const result = await axios.get(serverUrl + "/api/auth/signout" , {withCredentials:true})
-            console.log(result.data)
+            // console.log(result.data)
             dispatch(setUserData(null))
             showCustomAlert("Signout Successfully")
 
@@ -37,7 +37,7 @@ const Profile = () => {
    const googleSignIn = async () => {
       try {
         const response = await signInWithPopup(auth,provider)
-       console.log(response)
+      //  console.log(response)
         let user = response.user
         let username = user.displayName
         let email = user.email

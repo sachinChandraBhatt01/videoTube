@@ -45,20 +45,17 @@ const CreatePost = () => {
         communityPosts: [...(channelData.communityPosts || []), res.data],
       }; 
       dispatch(setChannelData(updatedChannel));
-      console.log("Updated Channel Data:", updatedChannel);
+      // console.log("Updated Channel Data:", updatedChannel);
 
       // dispatch(setAllPostData([res.data.post, ...(allPostData.posts || [])]));
-      console.log("New Post:", res.data);
+      // console.log("New Post:", res.data);
       dispatch(
         setAllPostData([
           res.data,
           ...(Array.isArray(allPostData) ? allPostData : []),
         ]),
       );
-      console.log("Updated All Posts:", [
-        res.data,
-        ...(Array.isArray(allPostData) ? allPostData : []),
-      ]);
+      console.log("Updated All Posts:");
 
       showCustomAlert("Post Published Successfully!");
       setContent("");

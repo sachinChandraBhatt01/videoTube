@@ -84,7 +84,7 @@ const WatchVideoPage = () => {
 
     // Redux me se current video nikal lo
     const currentVideo = recommendationData?.recommendedVideos.find((v) => v._id === videoId);
-    console.log("Current Video:", currentVideo);
+    console.log("Current Video:");
     if (currentVideo) {
       setVideo(currentVideo);
       setChannel(currentVideo.channel || []);
@@ -171,7 +171,7 @@ const WatchVideoPage = () => {
         { withCredentials: true },
       );
       setVideo(res.data);
-      console.log(res.data);
+      // console.log(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -185,7 +185,7 @@ const WatchVideoPage = () => {
         { withCredentials: true },
       );
       setVideo(res.data);
-      console.log(res.data);
+      // console.log(res.data);
     } catch (err) {
       console.error(err);
     }
@@ -244,7 +244,7 @@ const WatchVideoPage = () => {
         { withCredentials: true },
       );
       setComments(res.data?.comments);
-      console.log(res.data.comments);
+      // console.log(res.data.comments);
     } catch (err) {
       console.error(err);
     }
@@ -273,7 +273,7 @@ const WatchVideoPage = () => {
           { contentId: videoId, contentType: "Video" },
           { withCredentials: true },
         );
-        console.log(res.data);
+        // console.log(res.data);
       } catch (err) {
         console.error("Error adding history:", err);
       }

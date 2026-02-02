@@ -15,7 +15,7 @@ const UseGetHistroy = (userData) => {
         const result = await axios.get(serverUrl + "/api/user/gethistory", {
           withCredentials: true,
         });
-        console.log("🔄 Fetching history from server..." , result);
+        console.log("🔄 Fetching history from server...");
         const history = result.data || [];
 
         // ✅ Split videos & shorts
@@ -26,7 +26,7 @@ const UseGetHistroy = (userData) => {
         dispatch(setVideoHistory(videos));
         dispatch(setShortHistory(shorts));
 
-        console.log("📺 History fetched:", { videos, shorts });
+        // console.log("📺 History fetched:", { videos, shorts });
       } catch (error) {
         console.error("❌ Error fetching history:", error);
 

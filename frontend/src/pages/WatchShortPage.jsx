@@ -132,7 +132,7 @@ const WatchShortPage = () => {
   const handleAddView = async (shortId) => {
     try {
       await axios.put(`${serverUrl}/api/content/short/${shortId}/add-view`, {}, { withCredentials: true });
-      console.log("✅ View added for:", shortId);
+      console.log("✅ View added");
     } catch (err) {
       console.error("View error:", err);
     }
@@ -201,7 +201,7 @@ const WatchShortPage = () => {
         { withCredentials: true }
       );
       setLoading(false)
-      console.log(res.data)
+      // console.log(res.data)
       const updatedChannel = res.data;
 
       // ✅ shortsList ke andar jis short ka channel match hua hai sirf usko update karo
@@ -266,7 +266,7 @@ useEffect(() => {
         { contentId: shortId, contentType: "Short" },  // 👈 change
         { withCredentials: true }
       );
-      console.log(res.data)
+      // console.log(res.data)
     } catch (err) {
       console.error("Error adding short history:", err);
     }

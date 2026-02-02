@@ -76,7 +76,7 @@ const CreateVideo = () => {
       dispatch(setAllChannelData(updatedAllChannels));
 
       showCustomAlert("Video Uploaded Successfully");
-      console.log(result.data);
+      // console.log(result.data);
       navigate("/");
     } catch (error) {
       console.error(error);

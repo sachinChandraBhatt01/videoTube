@@ -135,7 +135,7 @@ function Home() {
         { withCredentials: true },
       );
       setSearchData(result.data);
-      console.log(result.data);
+      // console.log(result.data);
       navigate("/");
       setInput("");
       setPopUp(false);
@@ -191,11 +191,7 @@ function Home() {
       setLoading1(false);
       navigate("/");
 
-      console.log("Category filter merged:", {
-        ...result.data,
-        videos: [...videos, ...channelVideos],
-        shorts: [...shorts, ...channelShorts],
-      });
+      console.log("Category filter merged:");
 
       if (
         videos?.length > 0 ||

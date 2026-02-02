@@ -43,7 +43,7 @@ function UpdateChannel() {
     setLoading(true)
     try {
       const result = await axios.post(serverUrl + "/api/user/update-channel" ,formData , {withCredentials:true})
-      console.log(result)
+      // console.log(result)
       showCustomAlert("Channel Updated")
       dispatch(setChannelData(result.data))
       navigate("/")

@@ -22,7 +22,7 @@ function YoutubeSignin() {
   const handleSignIn = async () => {
     try {
         const result = await axios.post(serverUrl + "/api/auth/signin", {email , password} , {withCredentials:true})
-        console.log(result.data)
+        // console.log(result.data)
         setLoading(false)
         navigate("/")
         dispatch(setUserData(result.data))
