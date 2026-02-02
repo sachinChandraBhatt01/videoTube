@@ -41,13 +41,14 @@ import RevenuePage from "./component/RevenuePage";
 // import useGetHistory from "./customHooks/useGetHistroy.jsx";
 // import useGetRecommendation from "./customHooks/useGetRecommendation.jsx";
 
-import UsegetAllContentData from "./customHooks/useGetAllContentData1";
-import UseGetChannel from "./customHooks/useGetChannel2";
-import UseGetChannelContent from "./customHooks/useGetChannelContent3";
-import UseGetCurrentUser from "./customHooks/useGetCurrentUser4";
-import UseGetHistory from "./customHooks/useGetHistory";
-import UseGetRecommendation from "./customHooks/useGetRecommendation6";
-import UseGetSubscribedContent from "./customHooks/useGetSubscribedContent1";
+// import UsegetAllContentData from "./customHooks/useGetAllContentData";
+import UseGetChannel from "./customHooks/useGetChannel";
+import UseGetChannelContent from "./customHooks/useGetChannelContent";
+import UseGetCurrentUser from "./customHooks/useGetCurrentUser";
+import UseGetHistory from "./customHooks/useGetHistroy";
+import UseGetRecommendation from "./customHooks/useGetRecommendation";
+import UseGetSubscribedContent from "./customHooks/useGetSubscribedContent";
+import UsegetAllContentData from "./customHooks/useGetAllContentData";
 
 
 export const serverUrl =
