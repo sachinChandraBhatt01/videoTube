@@ -42,14 +42,17 @@ import RevenuePage from "./component/RevenuePage";
 // import useGetRecommendation from "./customHooks/useGetRecommendation.jsx";
 
 // import UsegetAllContentData from "./customHooks/useGetAllContentData";
-import UseGetChannel from "./customHooks/useGetChannel";
-import UseGetChannelContent from "./customHooks/useGetChannelContent";
-import UseGetCurrentUser from "./customHooks/useGetCurrentUser";
-import UseGetHistory from "./customHooks/useGetHistroy";
+// import UseGetChannel from "./customHooks/useGetChannel";
+// import UseGetChannelContent from "./customHooks/useGetChannelContent";
+// import UseGetCurrentUser from "./customHooks/useGetCurrentUser";
+// import UseGetHistory from "./customHooks/useGetHistroy";
 import UseGetRecommendation from "./customHooks/useGetRecommendation";
 import UseGetSubscribedContent from "./customHooks/useGetSubscribedContent";
 import UsegetAllContentData from "./customHooks/useGetAllContentData";
-
+import UsegetChannel from "./customHooks/UsegetChannel";
+import UsegetCurrentUser from "./customHooks/useGetCurrentUser";
+import UsegetChannelContent from "./customHooks/useGetChannelContent";
+import UseGetHistroy from "./customHooks/useGetHistroy";
 
 export const serverUrl =
   import.meta.env.VITE_BACKEND_URI || "http://localhost:8000";
@@ -66,12 +69,12 @@ function App() {
   const { userData } = useSelector((state) => state.user);
 
   UsegetAllContentData();
-  UseGetCurrentUser();
+  UsegetCurrentUser();
 
-  UseGetChannel(userData);
-  UseGetChannelContent(userData);
+  UsegetChannel(userData);
+  UsegetChannelContent(userData);
   UseGetSubscribedContent(userData);
-  UseGetHistory(userData);
+  UseGetHistroy(userData);
   UseGetRecommendation(userData);
 
   function ChannelPageWrapper() {
