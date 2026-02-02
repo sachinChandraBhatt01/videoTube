@@ -5,7 +5,7 @@ import Shorts from "./pages/Shorts";
 import YoutubeSignin from "./pages/YoutubeSignin";
 import CustomAlert, { showCustomAlert } from "./component/CustomAlert";
 import CreateAccount from "./pages/CreateAccount";
-import useGetCurrentUser from "./customHooks/useGetCurrentUser";
+// import useGetCurrentUser from "./customHooks/useGetCurrentUser";
 import { useDispatch, useSelector } from "react-redux";
 import ForgetPassword from "./pages/ForgetPassword";
 import CreateChannelFlow from "./pages/CreateChannelFlow";
@@ -40,6 +40,7 @@ import ManagePlaylist from "./pages/ManagePlaylist";
 import useGetRecommendation from "./customHooks/useGetRecommendation";
 import RevenuePage from "./component/RevenuePage";
 import useGetChannel from "./customHooks/useGetChannel";
+import useGetCurrentUser from "./customHooks/UsegetCurrentUser";
 
 export const serverUrl =
   import.meta.env.VITE_BACKEND_URI || "http://localhost:8000";
