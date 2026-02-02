@@ -4,7 +4,7 @@ import { setVideoHistory, setShortHistory } from "../redux/userSlice";
 import axios from "axios";
 import { serverUrl } from "../App";
 
-const UseGetHistory = () => {
+const useGetHistroy = (userData) => {
   const dispatch = useDispatch();
 
   const { historyRefresh } = useSelector((state) => state.user); // Ensure user state is available
@@ -37,7 +37,7 @@ const UseGetHistory = () => {
     };
 
     fetchHistory();
-  }, [dispatch , historyRefresh]); // Re-fetch when historyRefresh changes
+  }, [dispatch , historyRefresh, userData]); // Re-fetch when historyRefresh changes
 };
 
-export default UseGetHistory;  
+export default useGetHistroy;  

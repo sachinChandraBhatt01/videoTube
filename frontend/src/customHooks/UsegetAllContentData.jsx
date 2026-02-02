@@ -4,7 +4,7 @@ import { setAllPostData, setAllShortData, setAllVideoData  } from '../redux/cont
 import { serverUrl } from '../App';
 import axios from 'axios';
 
-const UsegetAllContent = () => {
+const useGetAllContentData = () => {
   const dispatch = useDispatch()
   
   useEffect(() => {
@@ -59,4 +59,4 @@ const UsegetAllContent = () => {
   
 }
 
-export default UsegetAllContent
+export default useGetAllContentData

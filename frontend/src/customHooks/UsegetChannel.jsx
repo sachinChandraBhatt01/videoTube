@@ -4,7 +4,7 @@ import { setAllChannelData, setChannelData } from '../redux/userSlice'
 import axios from 'axios'
 import { serverUrl } from '../App'
 
-const UsegetChannel = () => {
+const useGetChannel = (userData) => {
   const dispatch = useDispatch()
   useEffect(()=>{
    const fetchChannel = async () => {
@@ -18,7 +18,7 @@ const UsegetChannel = () => {
     }
    }
    fetchChannel()
-  },[])
+  },[userData , dispatch])
 
   useEffect(()=>{
    const fetchAllChannel = async () => {
@@ -32,7 +32,8 @@ const UsegetChannel = () => {
     }
    }
    fetchAllChannel()
-  },[])
+  },[userData , dispatch])
+  return null
 }
 
-export default UsegetChannel
+export default useGetChannel

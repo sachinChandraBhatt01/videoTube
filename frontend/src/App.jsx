@@ -5,32 +5,31 @@ import Shorts from "./pages/Shorts";
 import YoutubeSignin from "./pages/YoutubeSignin";
 import CustomAlert, { showCustomAlert } from "./component/CustomAlert";
 import CreateAccount from "./pages/CreateAccount";
-import getCurrentUser from "./customHooks/UsegetCurrentUser";
+import useGetCurrentUser from "./customHooks/useGetCurrentUser";
 import { useDispatch, useSelector } from "react-redux";
 import ForgetPassword from "./pages/ForgetPassword";
 import CreateChannelFlow from "./pages/CreateChannelFlow";
 import ViewChannel from "./pages/ViewChannel";
 import UpdateChannel from "./pages/UpdateChannel";
 import MobileProfile from "./pages/MobileProfile";
-import UsegetChannel from "./customHooks/UsegetChannel";
 import CreatePage from "./pages/CreatePage";
 import CreateVideo from "./pages/CreateVideo";
 import CreatePost from "./pages/CreatePost";
 import CreateShorts from "./pages/CreateShorts";
 import CreatePlaylist from "./pages/CreatePlaylist";
-import UsegetChannelContent from "./customHooks/UsegetChannelContent";
-import UsegetAllContent from "./customHooks/UsegetAllContentData";
+import useGetChannelContent from "./customHooks/useGetChannelContent";
+import useGetAllContent from "./customHooks/useGetAllContentData";
 import WatchVideoPage from "./pages/WatchVideoPage";
 import WatchShortPage from "./pages/WatchShortPage";
 import ChannelPage from "./pages/ChannelPage";
 import SubscribePage from "./pages/SubscribePage";
-import UseGetSubscribedContent from "./customHooks/UseGetSubscribedContent";
+import useGetSubscribedContent from "./customHooks/useGetSubscribedContent";
 import SavedPlaylistPage from "./pages/SavedPlaylistPage";
 import SavedContentPage from "./pages/SavedContentPage";
 import LikedContentPage from "./pages/LikedContentPage";
 import ScrollToTop from "./component/ScrollToTop";
 import HistoryPage from "./pages/HistoryPage";
-import UseGetHistory from "./customHooks/UseGetHistroy";
+import useGetHistory from "./customHooks/useGetHistroy";
 import PTStudio from "./pages/PTStudio";
 import Dashboard from "./component/Dashboard";
 import ContentPage from "./component/ContentPage";
@@ -38,8 +37,9 @@ import AnalyticsPage from "./component/AnalyticsPage";
 import ManageVideo from "./pages/ManageVideo";
 import ManageShort from "./pages/ManageShort";
 import ManagePlaylist from "./pages/ManagePlaylist";
-import UseGetRecommendation from "./customHooks/UseGetRecommendation";
+import useGetRecommendation from "./customHooks/useGetRecommendation";
 import RevenuePage from "./component/RevenuePage";
+import useGetChannel from "./customHooks/useGetChannel";
 
 export const serverUrl =
   import.meta.env.VITE_BACKEND_URI || "http://localhost:8000";
@@ -55,15 +55,14 @@ const ProtectedRoute = ({ userData, children }) => {
 function App() {
   const { userData } = useSelector((state) => state.user);
 
-  UsegetAllContent();
-  getCurrentUser();
-  {
-    userData && UsegetChannel();
-    UsegetChannelContent();
-    UseGetSubscribedContent();
-    UseGetHistory();
-    UseGetRecommendation();
-  }
+  useGetAllContent();
+  useGetCurrentUser();
+
+  useGetChannel(userData);
+  useGetChannelContent(userData);
+  useGetSubscribedContent(userData);
+  useGetHistory(userData);
+  useGetRecommendation(userData);
 
   function ChannelPageWrapper() {
     const location = useLocation();

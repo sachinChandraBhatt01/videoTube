@@ -27,7 +27,7 @@ import SearchResults from "./SearchResults";
 import { ClipLoader } from "react-spinners";
 import FilterResults from "./FilterResult";
 import RecommendationContent from "./RecommendationContent";
-import UseGetSubscribedContent from "../customHooks/UseGetSubscribedContent";
+import UseGetSubscribedContent from "../customHooks/useGetSubscribedContent.jsx";
 import { setHistoryRefresh } from "../redux/userSlice.js";
 
 function Home() {
