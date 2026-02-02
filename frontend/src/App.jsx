@@ -33,13 +33,13 @@ import ManageVideo from "./pages/ManageVideo";
 import ManageShort from "./pages/ManageShort";
 import ManagePlaylist from "./pages/ManagePlaylist";
 import RevenuePage from "./component/RevenuePage";
-import useGetCurrentUser from "./customHooks/UsegetCurrentUser";
-import useGetAllContentData from "./customHooks/useGetAllContentData";
-import useGetChannel from "./customHooks/useGetChannel";
-import useGetChannelContent from "./customHooks/useGetChannelContent";
-import useGetSubscribedContent from "./customHooks/useGetSubscribedContent";
-import useGetHistory from "./customHooks/useGetHistroy";
-import useGetRecommendation from "./customHooks/useGetRecommendation";
+import useGetCurrentUser from "./customHooks/UsegetCurrentUser.jsx";
+import useGetAllContentData from "./customHooks/useGetAllContentData.jsx";
+import useGetChannel from "./customHooks/useGetChannel.jsx";
+import useGetChannelContent from "./customHooks/useGetChannelContent.jsx";
+import useGetSubscribedContent from "./customHooks/useGetSubscribedContent.jsx";
+import useGetHistory from "./customHooks/useGetHistroy.jsx";
+import useGetRecommendation from "./customHooks/useGetRecommendation.jsx";
 
 export const serverUrl =
   import.meta.env.VITE_BACKEND_URI || "http://localhost:8000";
