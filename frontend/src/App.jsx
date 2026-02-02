@@ -39,7 +39,7 @@ import UsegetCurrentUser from "./customHooks/UsegetCurrentUser";
 import UsegetChannelContent from "./customHooks/UsegetChannelContent";
 import UseGetHistroy from "./customHooks/UseGetHistroy";
 import UseGetRecommendation from "./customHooks/UseGetRecommendation";
-import UsegetAllContentData from "./customHooks/UsegetAllContentData";
+import UsegetAllContentData from "./customHooks/useGetAllContentData";
 export const serverUrl =
   import.meta.env.VITE_BACKEND_URI || "http://localhost:8000";
 
