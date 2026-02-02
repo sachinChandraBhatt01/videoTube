@@ -18,7 +18,7 @@ import CreatePost from "./pages/CreatePost";
 import CreateShorts from "./pages/CreateShorts";
 import CreatePlaylist from "./pages/CreatePlaylist";
 import useGetChannelContent from "./customHooks/useGetChannelContent";
-import useGetAllContent from "./customHooks/useGetAllContentData";
+import useGetAllContentData from "./customHooks/useGetAllContentData";
 import WatchVideoPage from "./pages/WatchVideoPage";
 import WatchShortPage from "./pages/WatchShortPage";
 import ChannelPage from "./pages/ChannelPage";
@@ -55,7 +55,7 @@ const ProtectedRoute = ({ userData, children }) => {
 function App() {
   const { userData } = useSelector((state) => state.user);
 
-  useGetAllContent();
+  useGetAllContentData();
   useGetCurrentUser();
 
   useGetChannel(userData);
