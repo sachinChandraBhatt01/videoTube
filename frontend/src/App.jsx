@@ -37,7 +37,7 @@ import UseGetSubscribedContent from "./customHooks/UseGetSubscribedContent";
 import UsegetChannel from "./customHooks/UsegetChannel";
 import UsegetCurrentUser from "./customHooks/UsegetCurrentUser";
 import UsegetChannelContent from "./customHooks/UsegetChannelContent";
-import UseGetHistroy from "./customHooks/UseGetHistroyy";
+import UseGetHistroy from "./customHooks/UseGetHistroy";
 import UseGetRecommendation from "./customHooks/UseGetRecommendation";
 import UsegetAllContentData from "./customHooks/UsegetAllContentData";
 export const serverUrl =
