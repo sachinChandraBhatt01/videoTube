@@ -57,7 +57,7 @@ function App() {
   UsegetAllContentData();
   UsegetCurrentUser();
 
-  UsegetChannel(userData);
+  UsegetChannel();
   UsegetChannelContent(userData);
   UseGetSubscribedContent(userData);
   UseGetHistroy(userData);
