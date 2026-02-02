@@ -14,7 +14,7 @@ const UsegetChannel = () => {
         console.log(result.data)
     } catch (error) {
         console.log(error)
-        dispatch(setChannelData(null))
+        dispatch(setChannelData([]))
     }
    }
    fetchChannel()
@@ -28,7 +28,7 @@ const UsegetChannel = () => {
         console.log(result.data)
     } catch (error) {
         console.log(error)
-        dispatch(setAllChannelData(null))
+        dispatch(setAllChannelData([]))
     }
    }
    fetchAllChannel()
