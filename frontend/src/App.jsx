@@ -33,26 +33,13 @@ import ManageVideo from "./pages/ManageVideo";
 import ManageShort from "./pages/ManageShort";
 import ManagePlaylist from "./pages/ManagePlaylist";
 import RevenuePage from "./component/RevenuePage";
-// import useGetCurrentUser from "./customHooks/UsegetCurrentUser.jsx";
-// import useGetAllContentData from "./customHooks/useGetAllContentData.jsx";
-// import useGetChannel from "./customHooks/useGetChannel.jsx";
-// import useGetChannelContent from "./customHooks/useGetChannelContent.jsx";
-// import useGetSubscribedContent from "./customHooks/useGetSubscribedContent.jsx";
-// import useGetHistory from "./customHooks/useGetHistroy.jsx";
-// import useGetRecommendation from "./customHooks/useGetRecommendation.jsx";
-
-// import UsegetAllContentData from "./customHooks/useGetAllContentData";
-// import UseGetChannel from "./customHooks/useGetChannel";
-// import UseGetChannelContent from "./customHooks/useGetChannelContent";
-// import UseGetCurrentUser from "./customHooks/useGetCurrentUser";
-// import UseGetHistory from "./customHooks/useGetHistroy";
-import UseGetSubscribedContent from "./customHooks/useGetSubscribedContent";
-import UsegetAllContentData from "./customHooks/useGetAllContentData";
+import UseGetSubscribedContent from "./customHooks/UseGetSubscribedContent";
 import UsegetChannel from "./customHooks/UsegetChannel";
-import UsegetCurrentUser from "./customHooks/useGetCurrentUser";
-import UsegetChannelContent from "./customHooks/useGetChannelContent";
-import UseGetHistroy from "./customHooks/useGetHistroy";
-import UseGetRecommendation from "./customHooks/useGetRecommendation";
+import UsegetCurrentUser from "./customHooks/UsegetCurrentUserr";
+import UsegetChannelContent from "./customHooks/UsegetChannelContent";
+import UseGetHistroy from "./customHooks/UseGetHistroyy";
+import UseGetRecommendation from "./customHooks/UseGetRecommendation";
+import UsegetAllContentData from "./customHooks/UsegetAllContentData";
 export const serverUrl =
   import.meta.env.VITE_BACKEND_URI || "http://localhost:8000";
 
