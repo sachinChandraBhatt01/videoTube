@@ -213,6 +213,11 @@ function Home() {
     }
   };
 
+  const handleHomeGo = async () => {
+    setFilterData(null);
+    setSearchData(null);
+  }
+
   UseGetSubscribedContent();
 
   return (
@@ -385,6 +390,7 @@ function Home() {
             selected={selectedItem === "Home"}
             onClick={() => {
               setSelectedItem("Home");
+              handleHomeGo
               navigate("/");
             }}
           />
@@ -563,7 +569,10 @@ function Home() {
       {/* ---------- BOTTOM NAV (MOBILE) ---------- */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f0f0f] border-t border-gray-800 flex justify-around py-2 z-10">
         <MobileNavItem
-          onClick={() => navigate("/")}
+          onClick={() => {
+            handleHomeGo
+            navigate("/") 
+          }}
           icon={<FaHome />}
           text="Home"
         />
