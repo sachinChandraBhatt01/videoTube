@@ -1,7 +1,7 @@
 import Video from "../model/videoModel.js";
 import Short from "../model/shortModel.js";
 import Playlist from "../model/playlistModel.js";
-import Channel from "../model/channelModel.js";  // ✅ Channel import karo
+import Channel from "../model/channelModel.js"; // ✅ Channel import karo
 import { GoogleGenAI } from "@google/genai";
 import dotenv from "dotenv";
 dotenv.config();
@@ -34,7 +34,10 @@ The user query is: "${input}"
     let keyword = (response.text || input).trim().replace(/[\n\r]+/g, "");
 
     // ✅ Step 2: Split keywords for OR search
-    const searchWords = keyword.split(",").map((w) => w.trim()).filter(Boolean);
+    const searchWords = keyword
+      .split(",")
+      .map((w) => w.trim())
+      .filter(Boolean);
 
     // ✅ Helper: create OR regex query
     const buildRegexQuery = (fields) => {
@@ -49,7 +52,7 @@ The user query is: "${input}"
 
     // 1️⃣ Channels
     const matchedChannels = await Channel.find(
-      buildRegexQuery(["name"])
+      buildRegexQuery(["name"]),
     ).select("_id name avatar");
 
     const channelIds = matchedChannels.map((c) => c._id);
@@ -99,9 +102,6 @@ The user query is: "${input}"
       .json({ message: `Failed to search: ${error.message}` });
   }
 };
-
-
-
 
 // export const filterCategoryWithAi = async (req, res) => {
 //   try {
@@ -209,6 +209,118 @@ The user query is: "${input}"
 //   }
 // };
 
+// export const filterCategoryWithAi = async (req, res) => {
+//   try {
+//     const { input } = req.body;
+//     if (!input) {
+//       return res.status(400).json({ message: "Search query is required" });
+//     }
+
+//     // 🔹 Initialize Gemini
+//     const ai = new GoogleGenAI({
+//       apiKey: process.env.GEMINI_API_KEY,
+//     });
+
+//     const categories = [
+//       "Music", "Gaming", "Movies", "TV Shows", "News",
+//       "Trending", "Entertainment", "Education", "Science & Tech",
+//       "Travel", "Fashion", "Cooking", "Sports", "Pets",
+//       "Art", "Comedy", "Vlogs"
+//     ];
+
+//     const prompt = `You are a category classifier for a video streaming platform.
+
+// The user query is: "${input}"
+
+// Return the most relevant categories from this list:
+// ${categories.join(", ")}
+
+// Rules:
+// - Return comma-separated category names
+// - No explanation, no JSON
+// `;
+
+//     const response = await ai.models.generateContent({
+//       model: "gemini-2.5-flash",
+//       contents: prompt,
+//     });
+
+//     // 🔹 Normalize + dedupe AI output
+//     const keywords = [
+//       ...new Set(
+//         response.text
+//           .toLowerCase()
+//           .split(",")
+//           .map(k => k.trim())
+//           .filter(Boolean)
+//       )
+//     ];
+
+//     // 🔹 Build query conditions
+//     const videoConditions = [];
+//     const shortConditions = [];
+//     const channelConditions = [];
+
+//     keywords.forEach(kw => {
+//       videoConditions.push(
+//         { category: { $regex: `^${kw}$`, $options: "i" } },
+//         { tags: { $in: [kw] } }
+//       );
+
+//       shortConditions.push(
+//         { category: { $regex: `^${kw}$`, $options: "i" } },
+//         { tags: { $in: [kw] } }
+//       );
+
+//       channelConditions.push(
+//         { category: { $regex: `^${kw}$`, $options: "i" } },
+//         { name: { $regex: kw, $options: "i" } }
+//       );
+//     });
+
+//     // 🔹 Query DB
+//     const videosRaw = await Video.find({ $or: videoConditions })
+//       .populate("channel comments.author comments.replies.author");
+
+//     const shortsRaw = await Short.find({ $or: shortConditions })
+//       .populate("channel", "name avatar")
+//       .populate("likes", "username photoUrl");
+
+//     const channelsRaw = await Channel.find({ $or: channelConditions })
+//       .populate("owner", "username photoUrl")
+//       .populate("subscribers", "username photoUrl")
+//       .populate({
+//         path: "videos",
+//         populate: { path: "channel", select: "name avatar" },
+//       })
+//       .populate({
+//         path: "shorts",
+//         populate: { path: "channel", select: "name avatar" },
+//       });
+
+//     // 🔥 Deduplicate results by _id
+//     const dedupeById = (arr) =>
+//       Array.from(new Map(arr.map(item => [item._id.toString(), item])).values());
+
+//     const videos = dedupeById(videosRaw);
+//     const shorts = dedupeById(shortsRaw);
+//     const channels = dedupeById(channelsRaw);
+
+//     return res.status(200).json({
+//       videos,
+//       shorts,
+//       channels,
+//       keywords,
+//     });
+
+//   } catch (error) {
+//     console.error("Filter error:", error);
+//     return res.status(500).json({
+//       message: `Failed to filter: ${error.message}`,
+//     });
+//   }
+// };
+
 export const filterCategoryWithAi = async (req, res) => {
   try {
     const { input } = req.body;
@@ -216,107 +328,127 @@ export const filterCategoryWithAi = async (req, res) => {
       return res.status(400).json({ message: "Search query is required" });
     }
 
-    // 🔹 Initialize Gemini
+    /* -------------------- AI CATEGORY RESOLUTION -------------------- */
     const ai = new GoogleGenAI({
       apiKey: process.env.GEMINI_API_KEY,
     });
 
     const categories = [
-      "Music", "Gaming", "Movies", "TV Shows", "News",
-      "Trending", "Entertainment", "Education", "Science & Tech",
-      "Travel", "Fashion", "Cooking", "Sports", "Pets",
-      "Art", "Comedy", "Vlogs"
+      "Music",
+      "Gaming",
+      "Movies",
+      "TV Shows",
+      "News",
+      "Trending",
+      "Entertainment",
+      "Education",
+      "Science & Tech",
+      "Travel",
+      "Fashion",
+      "Cooking",
+      "Sports",
+      "Pets",
+      "Art",
+      "Comedy",
+      "Vlogs",
     ];
 
-    const prompt = `You are a category classifier for a video streaming platform.
+    const prompt = `
+You are a category classifier for a video streaming platform.
 
-The user query is: "${input}"
+User query: "${input}"
 
-Return the most relevant categories from this list:
+Choose the closest matching categories from:
 ${categories.join(", ")}
 
 Rules:
-- Return comma-separated category names
-- No explanation, no JSON
+- Return only comma-separated category names
+- No explanation
 `;
 
-    const response = await ai.models.generateContent({
+    const aiResponse = await ai.models.generateContent({
       model: "gemini-2.5-flash",
       contents: prompt,
     });
 
-    // 🔹 Normalize + dedupe AI output
+    // Normalize + dedupe categories
     const keywords = [
       ...new Set(
-        response.text
+        aiResponse.text
           .toLowerCase()
           .split(",")
-          .map(k => k.trim())
-          .filter(Boolean)
-      )
+          .map((k) => k.trim())
+          .filter(Boolean),
+      ),
     ];
 
-    // 🔹 Build query conditions
-    const videoConditions = [];
-    const shortConditions = [];
-    const channelConditions = [];
-
-    keywords.forEach(kw => {
-      videoConditions.push(
-        { category: { $regex: `^${kw}$`, $options: "i" } },
-        { tags: { $in: [kw] } }
-      );
-
-      shortConditions.push(
-        { category: { $regex: `^${kw}$`, $options: "i" } },
-        { tags: { $in: [kw] } }
-      );
-
-      channelConditions.push(
-        { category: { $regex: `^${kw}$`, $options: "i" } },
-        { name: { $regex: kw, $options: "i" } }
-      );
-    });
-
-    // 🔹 Query DB
-    const videosRaw = await Video.find({ $or: videoConditions })
-      .populate("channel comments.author comments.replies.author");
-
-    const shortsRaw = await Short.find({ $or: shortConditions })
-      .populate("channel", "name avatar")
-      .populate("likes", "username photoUrl");
-
-    const channelsRaw = await Channel.find({ $or: channelConditions })
-      .populate("owner", "username photoUrl")
-      .populate("subscribers", "username photoUrl")
-      .populate({
-        path: "videos",
-        populate: { path: "channel", select: "name avatar" },
-      })
-      .populate({
-        path: "shorts",
-        populate: { path: "channel", select: "name avatar" },
+    if (!keywords.length) {
+      return res.status(200).json({
+        videos: [],
+        shorts: [],
+        channels: [],
+        keywords: [],
       });
+    }
 
-    // 🔥 Deduplicate results by _id
+    /* -------------------- QUERY CONDITIONS -------------------- */
+
+    const categoryRegex = keywords.map((k) => new RegExp(`^${k}$`, "i"));
+
+    const videoQuery = {
+      $or: [{ category: { $in: categoryRegex } }, { tags: { $in: keywords } }],
+    };
+
+    const shortQuery = {
+      $or: [{ category: { $in: categoryRegex } }, { tags: { $in: keywords } }],
+    };
+
+    const channelQuery = {
+      $or: [
+        { category: { $in: categoryRegex } },
+        { name: { $regex: keywords.join("|"), $options: "i" } },
+      ],
+    };
+
+    /* -------------------- DATABASE QUERIES -------------------- */
+
+    const [videosRaw, shortsRaw, channelsRaw] = await Promise.all([
+      Video.find(videoQuery).populate(
+        "channel comments.author comments.replies.author",
+      ),
+
+      Short.find(shortQuery)
+        .populate("channel", "name avatar")
+        .populate("likes", "username photoUrl"),
+
+      Channel.find(channelQuery)
+        .populate("owner", "username photoUrl")
+        .populate("subscribers", "username photoUrl"),
+    ]);
+
+    /* -------------------- DEDUPLICATION -------------------- */
+
     const dedupeById = (arr) =>
-      Array.from(new Map(arr.map(item => [item._id.toString(), item])).values());
+      Array.from(
+        new Map(arr.map((item) => [item._id.toString(), item])).values(),
+      );
 
     const videos = dedupeById(videosRaw);
     const shorts = dedupeById(shortsRaw);
     const channels = dedupeById(channelsRaw);
 
+    /* -------------------- RESPONSE -------------------- */
+
     return res.status(200).json({
+      keywords,
       videos,
       shorts,
       channels,
-      keywords,
     });
-
   } catch (error) {
     console.error("Filter error:", error);
     return res.status(500).json({
-      message: `Failed to filter: ${error.message}`,
+      message: "Failed to filter content",
     });
   }
 };
