@@ -47,6 +47,9 @@ function Home() {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const { userData, subscribeChannel } = useSelector((state) => state.user);
+  const isSearching = Boolean(searchData);
+  const isFiltering = Boolean(filterData);
+
 
   const categories = [
     "Music",
@@ -134,6 +137,7 @@ function Home() {
         { input: query },
         { withCredentials: true },
       );
+      setFilterData(null);
       setSearchData(result.data);
       // console.log(result.data);
       navigate("/");
@@ -182,7 +186,7 @@ function Home() {
         if (ch?.videos?.length) channelVideos.push(...ch.videos);
         if (ch?.shorts?.length) channelShorts.push(...ch.shorts);
       });
-
+      setSearchData(null);
       setFilterData({
         ...result.data,
         videos: [...videos, ...channelVideos],
@@ -269,11 +273,10 @@ function Home() {
 
             {/* Mic button at bottom */}
             <button
-              className={`p-6 rounded-full shadow-xl transition-all duration-300 transform hover:scale-110 ${
-                listening
+              className={`p-6 rounded-full shadow-xl transition-all duration-300 transform hover:scale-110 ${listening
                   ? "bg-red-500 animate-pulse shadow-red-500/40"
                   : "bg-orange-500 hover:bg-orange-600 shadow-orange-500/40"
-              }`}
+                }`}
               onClick={handleSearch}
               disabled={loading}
             >
@@ -467,11 +470,9 @@ function Home() {
                 setSelectedItem(item._id);
                 navigate(`/channelpage/${item._id}`);
               }}
-              className={`flex items-center ${
-                sidebarOpen ? "gap-3 justify-start" : "justify-center"
-              } w-full text-left cursor-pointer p-2 rounded-lg transition ${
-                selectedItem === item._id ? "bg-[#272727]" : "hover:bg-gray-800"
-              }`}
+              className={`flex items-center ${sidebarOpen ? "gap-3 justify-start" : "justify-center"
+                } w-full text-left cursor-pointer p-2 rounded-lg transition ${selectedItem === item._id ? "bg-[#272727]" : "hover:bg-gray-800"
+                }`}
             >
               <img
                 src={item.avatar}
@@ -507,7 +508,7 @@ function Home() {
             </div>
 
             {/* Search + All Videos */}
-            <div className="mt-6">
+            {/* <div className="mt-6">
               <div className="w-full items-center flex justify-center ">
                 {loading1 ? <ClipLoader size={50} color="white" /> : ""}
               </div>
@@ -522,6 +523,33 @@ function Home() {
                   <ShortsPage />
                 </>
               )}
+            </div> */}
+            <div className="mt-6">
+              <div className="w-full items-center flex justify-center">
+                {loading1 && <ClipLoader size={50} color="white" />}
+              </div>
+
+              {/* SEARCH RESULT */}
+              {isSearching && !isFiltering && (
+                <SearchResults searchResults={searchData} />
+              )}
+
+              {/* FILTER RESULT */}
+              {isFiltering && !isSearching && (
+                <FilterResults filterResults={filterData} />
+              )}
+
+              {/* DEFAULT HOME CONTENT */}
+              {!isSearching &&
+                !isFiltering &&
+                (userData ? (
+                  <RecommendationContent />
+                ) : (
+                  <>
+                    <AllVideosPage />
+                    <ShortsPage />
+                  </>
+                ))}
             </div>
           </>
         )}
