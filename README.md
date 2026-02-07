@@ -119,11 +119,17 @@ npm start
 
 ### Environment Variables
 PORT=8000
+
 NODE_ENV=development
+
 HOST=localhost
+
 MONGO_URI=your mongodb url
+
 JWT_SECRET=your_jwt_secret_key
+
 JWT_EXPIRES_IN=7d
+
 GEMINI_API_KEY=gemini api key
 CLOUDINARY_NAME=
 CLOUDINARY_API_KEY=
