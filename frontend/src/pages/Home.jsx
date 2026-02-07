@@ -390,7 +390,7 @@ function Home() {
             selected={selectedItem === "Home"}
             onClick={() => {
               setSelectedItem("Home");
-              handleHomeGo
+              handleHomeGo();
               navigate("/");
             }}
           />
@@ -570,7 +570,7 @@ function Home() {
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0f0f0f] border-t border-gray-800 flex justify-around py-2 z-10">
         <MobileNavItem
           onClick={() => {
-            handleHomeGo
+            handleHomeGo();
             navigate("/") 
           }}
           icon={<FaHome />}
