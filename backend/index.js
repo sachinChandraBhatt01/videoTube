@@ -14,10 +14,17 @@ const port = process.env.PORT
 const app = express()
 app.use(cookieParser())
 app.use(express.json())
+const allowedOrigins = [
+  process.env.FRONTEND_URI,
+  process.env.SECOND_URI,
+  'http://localhost:5173'
+].filter(Boolean); // Filters out undefined if ENV is missing
+
 app.use(cors({
-   origin: process.env.SECOND_URI || process.env.FRONTEND_URI || "http://localhost:5173",
-   credentials:true
-}))
+  origin: allowedOrigins,
+  credentials: true
+}));
+
 
 
 
