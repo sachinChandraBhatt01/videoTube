@@ -18,7 +18,7 @@ const allowedOrigins = [
   process.env.FRONTEND_URI,
   process.env.SECOND_URI,
   'http://localhost:5173'
-].filter(Boolean); // Filters out undefined if ENV is missing
+].filter(Boolean);
 
 app.use(cors({
   origin: allowedOrigins,
