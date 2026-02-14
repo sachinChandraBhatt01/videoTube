@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/playtube1.png";
 import {
@@ -16,8 +17,8 @@ import { IoIosAddCircle } from "react-icons/io";
 import { GoVideo } from "react-icons/go";
 import { SiYoutubeshorts } from "react-icons/si";
 import { MdOutlineSubscriptions } from "react-icons/md";
+
 import Profile from "../component/Profile";
-import { useDispatch, useSelector } from "react-redux";
 import AllVideosPage from "../component/AllVideosPage";
 import ShortsPage from "../component/ShortsPage";
 import CustomAlert from "../component/CustomAlert";
@@ -30,6 +31,7 @@ import RecommendationContent from "./RecommendationContent";
 // import UseGetSubscribedContent from "../customHooks/useGetSubscribedContent1.jsx";
 import UseGetSubscribedContent from "../customHooks/UseGetSubscribedContent";
 import { setHistoryRefresh } from "../redux/userSlice.js";
+import {showCustomAlert} from "../component/CustomAlert.jsx"
 
 function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -118,9 +120,9 @@ function Home() {
       setListening(false);
 
       if (err.error === "no-speech") {
-        setAlertMessage("No speech detected. Please try again.");
+        showCustomAlert("No speech detected. Please try again.");
       } else {
-        setAlertMessage("Voice search failed. Try again.");
+        showCustomAlert("Voice search failed. Try again.");
       }
     };
 
@@ -296,7 +298,7 @@ function Home() {
       )}
 
       {/* ---------- NAVBAR ---------- */}
-      <header className="bg-[#0f0f0f] h-15 p-3 border-b border-gray-800 fixed top-0 left-0 right-0 z-50">
+      <header className="bg-[#0f0f0f] h-[64px] px-4 border-b border-gray-800 fixed top-0 left-0 right-0 z-50">
         <div className="flex items-center justify-between">
           {/* Left */}
           <div className="flex items-center gap-4">
@@ -512,24 +514,6 @@ function Home() {
                 </button>
               ))}
             </div>
-
-            {/* Search + All Videos */}
-            {/* <div className="mt-6">
-              <div className="w-full items-center flex justify-center ">
-                {loading1 ? <ClipLoader size={50} color="white" /> : ""}
-              </div>
-              {searchData && <SearchResults searchResults={searchData} />}
-              {filterData && <FilterResults filterResults={filterData} />}
-
-              {userData ? (
-                <RecommendationContent />
-              ) : (
-                <>
-                  <AllVideosPage />
-                  <ShortsPage />
-                </>
-              )}
-            </div> */}
             <div className="mt-6">
               <div className="w-full items-center flex justify-center">
                 {loading1 && <ClipLoader size={50} color="white" />}

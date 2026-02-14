@@ -44,7 +44,7 @@ function ForgetPassword() {
 
         } catch (error) {
             console.log(error)
-            toast.error(error.response.data.message)
+            showCustomAlert(error.response.data.message)
             setLoading(false)
         }
      }

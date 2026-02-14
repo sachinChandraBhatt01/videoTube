@@ -1,6 +1,6 @@
 import React, { Children, useEffect, useRef, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   FaPlay,
   FaPause,
@@ -20,6 +20,8 @@ import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import Description from "../component/Description";
 import ShortsCard from "../component/ShortsCard";
+import { setRecommendationData } from "../redux/contentSlice";
+import { setSubscribeChannel } from "../redux/userSlice";
 
 const IconButton = ({ icon: Icon, active, label, count, onClick }) => (
   <button onClick={onClick} className="flex flex-col items-center">
@@ -43,7 +45,8 @@ const WatchVideoPage = () => {
   const { allVideoData, recommendationData } = useSelector(
     (state) => state.content,
   );
-  const { userData } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const { userData, subscribeChannel } = useSelector((state) => state.user);
   const allVideos = [
     ...(recommendationData?.recommendedVideos || []),
     ...(recommendationData?.remainingVideos || []),
@@ -53,6 +56,8 @@ const WatchVideoPage = () => {
     ...(recommendationData?.recommendedShorts || []),
     ...(recommendationData?.remainingShorts || []),
   ];
+
+  const [subscribeData, setSubscribeData] = useState(subscribeChannel);
 
   const suggestedVideos =
     allVideos?.filter((v) => v._id !== videoId).slice(0, 10) || [];
@@ -83,13 +88,17 @@ const WatchVideoPage = () => {
     if (!videoId || !allVideoData) return;
 
     // Redux me se current video nikal lo
-    const currentVideo = recommendationData?.recommendedVideos.find((v) => v._id === videoId);
+    const currentVideo = recommendationData?.recommendedVideos.find(
+      (v) => v._id === videoId,
+    );
     console.log("Current Video:");
     if (currentVideo) {
       setVideo(currentVideo);
-      setChannel(currentVideo.channel || []);
-      setComments(currentVideo.comments || []);
+      setChannel(currentVideo?.channel || []);
+      setComments(currentVideo?.comments || []);
+      // console.log("Video found in recommendedVideos:", comments);
     }
+    // console.log(comments);
 
     // ✅ view count update karo
     axios
@@ -100,9 +109,24 @@ const WatchVideoPage = () => {
       )
       .then((res) => {
         setVideo((prev) => (prev ? { ...prev, views: res.data.views } : prev));
+        const RecommendationUpdate = recommendationData
+          ? {
+              ...recommendationData,
+              recommendedVideos: recommendationData.recommendedVideos.map(
+                (v) =>
+                  v._id === videoId ? { ...v, views: res.data.views } : v,
+              ),
+              remainingVideos: recommendationData.remainingVideos.map((v) =>
+                v._id === videoId ? { ...v, views: res.data.views } : v,
+              ),
+            }
+          : recommendationData;
+        dispatch(setRecommendationData(RecommendationUpdate));
       })
       .catch((err) => console.error(err));
-  }, [videoId, allVideoData]);
+  }, [dispatch]);
+
+  // console.log(comments)
 
   // Video Controls
   const togglePlay = () => {
@@ -214,6 +238,17 @@ const WatchVideoPage = () => {
         { withCredentials: true },
       );
       // Update channel's subscribers
+      const updatedChannel = res.data;
+
+      const newData = subscribeData.some(
+        (item) => String(item._id) === String(channel?._id),
+      )
+        ? subscribeData.filter((item) => String(item._id) !== String(channel?._id))
+        : [...subscribeData, updatedChannel];
+
+      setSubscribeData(newData); // local update
+      dispatch(setSubscribeChannel(newData)); // redux update
+
       setChannel((prev) => ({
         ...prev,
         subscribers: res.data.subscribers || prev.subscribers,
@@ -245,6 +280,7 @@ const WatchVideoPage = () => {
       );
       setComments(res.data?.comments);
       // console.log(res.data.comments);
+      setNewComment("");
     } catch (err) {
       console.error(err);
     }
@@ -268,7 +304,7 @@ const WatchVideoPage = () => {
   useEffect(() => {
     const addHistory = async () => {
       try {
-        const res = await axios.post(
+        await axios.post(
           `${serverUrl}/api/user/addhistory`,
           { contentId: videoId, contentType: "Video" },
           { withCredentials: true },
@@ -412,7 +448,7 @@ const WatchVideoPage = () => {
               <h3 className="text-[13px]">{channel?.subscribers?.length}</h3>
             </div>
             <button
-              className={`px-[20px] py-[8px] rounded-4xl border border-gray-600 ml-[20px] text-md ${
+              className={`px-[20px] py-[8px] right-0 rounded-4xl border border-gray-600 ml-[20px] text-md ${
                 isSubscribed
                   ? "bg-black text-white hover:bg-orange-600 hover:text-black"
                   : "bg-white text-black hover:bg-orange-600 hover:text-black"
@@ -515,7 +551,7 @@ const WatchVideoPage = () => {
                           className="w-8 h-8 rounded-full"
                         />
                         <h1 className="text-[13px]">
-                          @{comment?.author?.username.toLowerCase()}
+                          @{comment?.reply?.author?.username.toLowerCase()}
                         </h1>
                       </div>
                       <p className="px-[20px] py-[20px]">{reply?.message}</p>

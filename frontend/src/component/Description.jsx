@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Description = ({ text }) => {
+const Description = ({ text , width="full" }) => {
   const [expanded, setExpanded] = useState(false);
 
   if (!text) return null; // Agar text nahi hai toh kuch bhi show na ho
@@ -8,12 +8,10 @@ const Description = ({ text }) => {
   const showButton = text?.length > 100;
 
   return (
-    <div>
+    <div className={`${(width == 50) ? "w-3/4" : ""}`}>
       <p className={`text-sm text-gray-300 whitespace-pre-line ${expanded ? "" : "line-clamp-1"}`}>
         {text}
-      </p>
-
-      {showButton && (
+      </p>{showButton && (
         <button
           onClick={() => setExpanded(!expanded)}
           className="text-xs text-blue-400 mt-1 hover:underline"

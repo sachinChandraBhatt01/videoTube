@@ -1,236 +1,228 @@
 import axios from "axios";
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import {
   FaThumbsUp,
   FaThumbsDown,
   FaComment,
   FaPlay,
-  FaPause,
   FaDownload,
   FaBookmark,
-  FaArrowDown, // for closing comment section
+  FaArrowDown,
+  FaVolumeMute,
+  FaVolumeUp,
 } from "react-icons/fa";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { serverUrl } from "../App";
 import { ClipLoader } from "react-spinners";
+import { setRecommendationData } from "../redux/contentSlice";
 import Description from "../component/Description";
+import { setSubscribeChannel } from "../redux/userSlice";
+// import [setSubscribeChannel]
 
 const WatchShortPage = () => {
   const { shortId } = useParams();
-  const { userData } = useSelector((state) => state.user);
+  const { userData, subscribeChannel } = useSelector(
+    (state) => state.user,
+  );
+  const { allShortData, recommendationData } = useSelector(
+    (state) => state.content,
+  );
+
+  const [subscribeData, setSubscribeData] = useState(subscribeChannel);
+
+  // const [subscribeChannel] = useSelector()
+
   const navigate = useNavigate();
-  const { allShortData, recommendationData } = useSelector((state) => state.content);
-  
+  const dispatch = useDispatch();
 
   const selectedShort = allShortData?.find((s) => s._id === shortId);
+
   const [shortsList, setShortsList] = useState([]);
-
-  const [pausedIndex, setPausedIndex] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
-
-
+  const [pausedIndex, setPausedIndex] = useState(null);
+  const [muted, setMuted] = useState(false);
   const [openCommentShortId, setOpenCommentShortId] = useState(null);
-  const [comments, setComments] = useState({}); // store per-short comments
+  const [comments, setComments] = useState({});
   const [newComment, setNewComment] = useState("");
-  const [replyText, setReplyText] = useState({}); // reply state for each comment
-  const [viewedShorts, setViewedShorts] = useState([]);
-   const [loading,setLoading] = useState(false)
+  const [replyText, setReplyText] = useState({});
+  const [viewedShorts, setViewedShorts] = useState(new Set());
+  const [loadingChannelId, setLoadingChannelId] = useState(null);
 
-
+  const containerRef = useRef(null);
   const videoRefs = useRef([]);
 
-  // Arrange shorts
+  // Prepare shorts order
   useEffect(() => {
-    if (!allShortData || allShortData?.length === 0) return;
+    if (!allShortData?.length) return;
 
     if (selectedShort) {
-      const selected = recommendationData?.recommendedVideos.find(
-        (short) => short._id === selectedShort._id
-      );
-
-      const remaining = allShortData.filter(
-        (short) => short._id !== selectedShort._id
-      );
-
-      if (selected) {
-        setShortsList([selected, ...remaining]);
-        setActiveIndex(0);
-      } else {
-        setShortsList(allShortData);
-      }
+      const remaining = allShortData.filter((s) => s._id !== selectedShort._id);
+      setShortsList([selectedShort, ...remaining]);
+      setActiveIndex(0);
     } else {
       setShortsList(allShortData);
     }
-  }, [selectedShort, allShortData]);
+  }, [allShortData, selectedShort]);
 
-  // Auto play/pause
-  // Already exists in your code
+  // Add view only once
+  const handleAddView = useCallback(
+    async (id) => {
+      if (!id || viewedShorts.has(id)) return;
+
+      try {
+        await axios.put(
+          `${serverUrl}/api/content/short/${id}/add-view`,
+          {},
+          { withCredentials: true },
+        );
+
+        setViewedShorts((prev) => new Set(prev).add(id));
+
+        if (!recommendationData) return;
+
+        const updated = {
+          ...recommendationData,
+          recommendedShorts:
+            recommendationData.recommendedShorts?.map((s) =>
+              s._id === id ? { ...s, views: s.views + 1 } : s,
+            ) || [],
+          remainingShorts:
+            recommendationData.remainingShorts?.map((s) =>
+              s._id === id ? { ...s, views: s.views + 1 } : s,
+            ) || [],
+        };
+
+        dispatch(setRecommendationData(updated));
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    [viewedShorts, recommendationData, dispatch],
+  );
+
+  // Scroll snap detection (NO intersection bug now)
+  const handleScroll = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const index = Math.round(container.scrollTop / container.clientHeight);
+
+    if (index !== activeIndex) {
+      setActiveIndex(index);
+    }
+  };
+
+  // Auto play active video
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const index = Number(entry.target.dataset.index);
-          const video = videoRefs.current[index];
-          if (video) {
-            if (entry.isIntersecting) {
-              video.muted = false;
-              video.play();
-              setActiveIndex(index);
+    videoRefs.current.forEach((video, i) => {
+      if (!video) return;
 
-              const currentShortId = shortsList[index]._id;
-
-              if (!viewedShorts.includes(currentShortId)) {
-                handleAddView(currentShortId);
-                setViewedShorts((prev) => [...prev, currentShortId]); // ✅ ab sahi id add hogi
-              }
-            } else {
-              video.pause();
-              video.muted = true;
-            }
-          }
-        });
-      },
-      { threshold: 0.7 }
-    );
-
-    videoRefs.current.forEach((video) => {
-      if (video) observer.observe(video);
-    });
-
-    return () => observer.disconnect();
-  }, [shortsList, viewedShorts]);
-
-
-  // Toggle play/pause
-  const togglePlayPause = (index) => {
-    const video = videoRefs.current[index];
-    if (video) {
-      if (video.paused) {
-        video.play();
-        setPausedIndex(null);
+      if (i === activeIndex) {
+        video.muted = muted;
+        video
+          .play()
+          .then(() => setPausedIndex(null))
+          .catch(() => {});
+        handleAddView(shortsList[i]?._id);
       } else {
         video.pause();
-        setPausedIndex(index);
+        video.currentTime = 0;
       }
+    });
+  }, [activeIndex, muted, shortsList, handleAddView]);
+
+  const togglePlayPause = (index) => {
+    const video = videoRefs.current[index];
+    if (!video) return;
+
+    if (video.paused) {
+      video
+        .play()
+        .then(() => setPausedIndex(null))
+        .catch(() => {});
+    } else {
+      video.pause();
+      setPausedIndex(index);
     }
   };
 
-  // Download video
-  const handleDownload = (e, url, title) => {
-    e.stopPropagation();
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = title || "short-video.mp4";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const toggleMute = () => {
+    const video = videoRefs.current[activeIndex];
+    if (!video) return;
+    video.muted = !video.muted;
+    setMuted(video.muted);
   };
 
-
-  // Add this function inside WatchShortPage
-  const handleAddView = async (shortId) => {
-    try {
-      await axios.put(`${serverUrl}/api/content/short/${shortId}/add-view`, {}, { withCredentials: true });
-      console.log("✅ View added");
-    } catch (err) {
-      console.error("View error:", err);
-    }
+  const updateShortInState = (updatedShort) => {
+    setShortsList((prev) =>
+      prev.map((s) => (s._id === updatedShort._id ? updatedShort : s)),
+    );
   };
 
-
-
-  const handleLike = async (shortId) => {
-    try {
-      const res = await axios.put(
-        `${serverUrl}/api/content/short/${shortId}/toggle-like`,
-        {},
-        { withCredentials: true }
-      );
-
-      const updatedShort = res.data;
-      const updatedShortList = shortsList.map((s) =>
-        s._id === updatedShort._id ? updatedShort : s
-      );
-      setShortsList(updatedShortList);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleDislike = async (shortId) => {
+  const handleAction = async (shortId, type) => {
     try {
       const res = await axios.put(
-        `${serverUrl}/api/content/short/${shortId}/toggle-dislike`,
+        `${serverUrl}/api/content/short/${shortId}/${type}`,
         {},
-        { withCredentials: true }
+        { withCredentials: true },
       );
-      const updatedShort = res.data;
-      const updatedShortList = shortsList.map((s) =>
-        s._id === updatedShort._id ? updatedShort : s
-      );
-      setShortsList(updatedShortList);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  const handleSave = async (shortId) => {
-    try {
-      const res = await axios.put(
-        `${serverUrl}/api/content/short/${shortId}/toggle-save`,
-        {},
-        { withCredentials: true }
-      );
-      const updatedShort = res.data;
-      const updatedShortList = shortsList.map((s) =>
-        s._id === updatedShort._id ? updatedShort : s
-      );
-      setShortsList(updatedShortList);
+      updateShortInState(res.data);
     } catch (err) {
       console.error(err);
     }
   };
 
   const handleSubscribe = async (channelId) => {
-    setLoading(true)
     try {
+      setLoadingChannelId(channelId);
       const res = await axios.post(
         `${serverUrl}/api/user/subscribe`,
         { channelId },
-        { withCredentials: true }
+        { withCredentials: true },
       );
-      setLoading(false)
-      // console.log(res.data)
-      const updatedChannel = res.data;
 
-      // ✅ shortsList ke andar jis short ka channel match hua hai sirf usko update karo
+      const updatedChannel = res.data;
+      // console.log(updatedChannel);
+      // console.log("type of", typeof setSubscribeChannel);
+      const newData = subscribeData.some(
+        (item) => String(item._id) === String(channelId),
+      )
+        ? subscribeData.filter((item) => String(item._id) !== String(channelId))
+        : [...subscribeData, updatedChannel];
+
+      setSubscribeData(newData); // local update
+      dispatch(setSubscribeChannel(newData)); // redux update
+
+      // console.log("NEW DATA:", newData);
+      // console.log("subscribe channel" , subscribeChannel);
       setShortsList((prev) =>
         prev.map((short) =>
           short.channel._id === channelId
             ? { ...short, channel: updatedChannel }
-            : short
-        )
+            : short,
+        ),
       );
-    } catch (error) {
-      console.log(error);
-      setLoading(false)
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoadingChannelId(null);
     }
   };
 
   const handleAddComment = async (shortId) => {
     if (!newComment.trim()) return;
+
     try {
       const res = await axios.post(
         `${serverUrl}/api/content/short/${shortId}/comment`,
         { message: newComment },
-        { withCredentials: true }
+        { withCredentials: true },
       );
 
-      // Use full comments array returned by backend
       setComments((prev) => ({
         ...prev,
-        [shortId]: res.data.comments || [],
+        [shortId]: res.data.comments,
       }));
 
       setNewComment("");
@@ -239,356 +231,371 @@ const WatchShortPage = () => {
     }
   };
 
-  const handleAddReply = async (shortId, commentId, replyTextValue) => {
-    if (!replyTextValue.trim()) return;
+  const handleAddReply = async (shortId, commentId) => {
+    if (!replyText[commentId]?.trim()) return;
+
     try {
       const res = await axios.post(
         `${serverUrl}/api/content/short/${shortId}/${commentId}/reply`,
-        { message: replyTextValue },
-        { withCredentials: true }
+        { message: replyText[commentId] },
+        { withCredentials: true },
       );
 
       setComments((prev) => ({
         ...prev,
-        [shortId]: res.data.comments, // refresh full comments for this short
+        [shortId]: res.data.comments,
       }));
+
       setReplyText((prev) => ({ ...prev, [commentId]: "" }));
     } catch (err) {
       console.error(err);
     }
   };
 
-useEffect(() => {
-  const addHistory = async () => {
-    try {
-     const res= await axios.post(
-        `${serverUrl}/api/user/addhistory`,
-        { contentId: shortId, contentType: "Short" },  // 👈 change
-        { withCredentials: true }
-      );
-      // console.log(res.data)
-    } catch (err) {
-      console.error("Error adding short history:", err);
-    }
-  };
-
-  if (shortId) addHistory();
-}, [shortId]);
   return (
-    <div className="h-[90vh] w-full overflow-y-scroll snap-y snap-mandatory mt-[50px] re">
-      {shortsList?.map((short, index) => (
-        <div
-          key={short._id}
-          className="h-screen md:h-[calc(100vh-50px)] w-full flex md:items-center items-start justify-center snap-start relative"
-        >
+    <div className="fixed top-16 left-0 w-full md:w-[60vw] lg:w-full lg:left-0 md:left-[25vh] bottom-0 bg-black flex justify-center items-center overflow-hidden">
+      <div
+        ref={containerRef}
+        onScroll={handleScroll}
+        className="w-full max-w-md h-full overflow-y-scroll snap-y snap-mandatory scroll-smooth"
+      >
+        {shortsList.map((short, index) => (
           <div
-            className="relative w-[420px] md:w-[350px]  aspect-[9/16] bg-black rounded-2xl overflow-hidden shadow-xl border border-gray-700 cursor-pointer"
-            onClick={() => togglePlayPause(index)}
+            key={short._id}
+            className="relative snap-start h-full w-full flex items-center justify-center"
           >
             <video
               ref={(el) => (videoRefs.current[index] = el)}
-              data-index={index}
               src={short.shortUrl}
-              className="w-full h-full object-cover"
+              className="absolute inset-0 w-full h-full object-cover"
               loop
               playsInline
+              onClick={() => togglePlayPause(index)}
             />
 
             {pausedIndex === index && (
-              <div className="absolute top-3 right-3 bg-black/60 rounded-full p-2">
-                <FaPlay className="text-white text-lg" />
+              <div
+                onClick={() => togglePlayPause(index)}
+                className="absolute inset-0 flex items-center justify-center bg-black/40 z-20"
+              >
+                <FaPlay className="text-white text-6xl" />
               </div>
             )}
 
-            {pausedIndex !== index && activeIndex === index && (
-              <div className="absolute top-3 right-3 bg-black/60 rounded-full p-2">
-                <FaPause className="text-white text-lg" />
-              </div>
-            )}
+            {/* Right Controls */}
+            {/* <div className="absolute right-4 bottom-28 flex flex-col gap-6 text-white z-30">
+              <button
+                onClick={toggleMute}
+                className="bg-black/60 p-3 rounded-full backdrop-blur-md"
+              >
+                {muted ? <FaVolumeMute /> : <FaVolumeUp />}
+              </button>
 
-            {/* Bottom Info */}
-            <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 via-black/40 to-transparent text-white space-y-2">
-              <div className="flex items-center justify-start gap-2" >
-                <img
-                  src={short.channel?.avatar}
-                  alt=""
-                  className="w-8 h-8 rounded-full border-1 border-gray-700"
-                  onClick={() => navigate(`/channelpage/${short?.channel._id}`)}
-                />
-                <span className="text-sm text-gray-300 " onClick={() => navigate(`/channelpage/${short?.channel._id}`)}>
-                  @{short.channel?.name || "Unknown Channel"}
+              <div className="absolute right-3 sm:right-5 bottom-24 sm:bottom-32 flex flex-col items-center gap-5 sm:gap-6">
+                {[
+                  {
+                    icon: FaThumbsUp,
+                    count: short.likes?.length,
+                    active: short.likes?.includes(userData?._id),
+                    action: () => handleAction(short._id, "toggle-like"),
+                  },
+                  {
+                    icon: FaThumbsDown,
+                    count: short.dislikes?.length,
+                    active: short.dislikes?.includes(userData?._id),
+                    action: () => handleAction(short._id, "toggle-dislike"),
+                  },
+                  {
+                    icon: FaBookmark,
+                    count: short.saveBy?.length,
+                    active: short.saveBy?.includes(userData?._id),
+                    action: () => handleAction(short._id, "toggle-save"),
+                  },
+                ].map((item, i) => (
+                  <button
+                    key={i}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      item.action();
+                    }}
+                    className="flex flex-col items-center group transition-all duration-200"
+                  >
+                    <div
+                      className={`
+          flex items-center justify-center
+          w-11 h-11 sm:w-12 sm:h-12 md:w-13 md:h-13
+          rounded-full
+          transition-all duration-200
+          ${
+            item.active
+              ? "bg-white text-black scale-105"
+              : "bg-black/60 backdrop-blur-md text-white hover:bg-black/80"
+          }
+        `}
+                    >
+                      <item.icon className="text-[18px] sm:text-[20px] md:text-[22px]" />
+                    </div>
+
+                    <span className="text-[11px] sm:text-xs mt-1 text-white">
+                      {item.count || 0}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpenCommentShortId(short._id);
+                  setComments((prev) => ({
+                    ...prev,
+                    [short._id]: short.comments || [],
+                  }));
+                }}
+                className="flex flex-col items-center"
+              >
+                <div className="p-3 rounded-full bg-black/60 backdrop-blur-md">
+                  <FaComment />
+                </div>
+                <span className="text-xs mt-1">
+                  {short.comments?.length || 0}
                 </span>
+              </button>
+
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const link = document.createElement("a");
+                  link.href = short.shortUrl;
+                  link.download = short.title || "short.mp4";
+                  link.click();
+                }}
+                className="flex flex-col items-center"
+              >
+                <div className="p-3 rounded-full bg-black/60 backdrop-blur-md">
+                  <FaDownload />
+                </div>
+              </button>
+            </div> */}
+            <div className="absolute right-3 sm:right-6 top-[40%] md:top-[36%] bottom-14 md:bottom-0 -translate-y-1/2 flex flex-col items-center gap-5 sm:gap-6 text-white z-30">
+              {/* Mute */}
+              <button
+                onClick={toggleMute}
+                className="flex flex-col items-center"
+              >
+                <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-md">
+                  {muted ? (
+                    <FaVolumeMute size={18} />
+                  ) : (
+                    <FaVolumeUp size={18} />
+                  )}
+                </div>
+              </button>
+
+              {/* Like / Dislike / Save */}
+              {[
+                {
+                  icon: FaThumbsUp,
+                  count: short.likes?.length,
+                  active: short.likes?.includes(userData?._id),
+                  action: () => handleAction(short._id, "toggle-like"),
+                },
+                {
+                  icon: FaThumbsDown,
+                  count: short.dislikes?.length,
+                  active: short.dislikes?.includes(userData?._id),
+                  action: () => handleAction(short._id, "toggle-dislike"),
+                },
+                {
+                  icon: FaBookmark,
+                  count: short.saveBy?.length,
+                  active: short.saveBy?.includes(userData?._id),
+                  action: () => handleAction(short._id, "toggle-save"),
+                },
+              ].map((item, i) => (
                 <button
+                  key={i}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSubscribe(short.channel?._id);
+                    item.action();
                   }}
-                  className={`${short?.channel?.subscribers?.includes(userData?._id)
-                      ? "bg-[#000000a1] text-white border-1 border-gray-700"
-                      : "bg-white text-black"
-                    }  text-xs px-[20px] py-[10px] rounded-full cursor-pointer`} disabled={loading}
+                  className="flex flex-col items-center transition-all duration-200"
                 >
-                  {loading?<ClipLoader size={20} color="gray"/>:short?.channel?.subscribers?.includes(userData?._id)
-                    ? "Subscribed"
-                    : "Subscribe"}
+                  <div
+                    className={`
+          w-10 h-10 sm:w-11 sm:h-11
+          flex items-center justify-center
+          rounded-full
+          transition-all duration-200
+          ${
+            item.active
+              ? "bg-white text-black scale-105"
+              : "bg-black/60 backdrop-blur-md text-white hover:bg-black/80"
+          }
+        `}
+                  >
+                    <item.icon size={18} />
+                  </div>
+
+                  <span className="text-[11px] sm:text-xs mt-1">
+                    {item.count || 0}
+                  </span>
                 </button>
-
-              </div>
-              <div className="flex items-center justify-start gap-3">
-                <h2 className="font-bold text-lg line-clamp-2">{short.title}</h2>
-              </div>
-               { short?.description && <div>
-  
-  <Description text={short?.description} />
-</div>}
-              <div>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {short.tags &&
-                    short.tags.map((tag, i) => (
-                      <span
-                        key={i}
-                        className="bg-gray-800 text-gray-200 text-xs px-2 py-1 rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                </div>
-                
-              </div>
-            </div>
-
-            {/* Right Side Buttons */}
-            <div className="absolute right-3 bottom-28 flex flex-col items-center gap-5 text-white">
-              {/* Like */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleLike(short._id);
-                }}
-                className="flex flex-col items-center"
-              >
-                <div
-                  className={`${short?.likes?.includes(userData?._id)
-                      ? "bg-white"
-                      : "bg-[#00000065] border border-gray-700"
-                    } p-3 rounded-full hover:bg-gray-700`}
-                >
-                  <FaThumbsUp
-                    size={22}
-                    className={`${short?.likes?.includes(userData?._id)
-                        ? "text-black"
-                        : "text-white"
-                      }`}
-                  />
-                </div>
-                <span className="text-xs mt-1">{short?.likes?.length}</span>
-              </button>
-
-              {/* Dislike */}
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDislike(short._id);
-                }}
-                className="flex flex-col items-center"
-              >
-                <div
-                  className={`${short?.dislikes?.includes(userData?._id)
-                      ? "bg-white"
-                      : "bg-[#00000065] border border-gray-700"
-                    } p-3 rounded-full hover:bg-gray-700`}
-                >
-                  <FaThumbsDown
-                    size={22}
-                    className={`${short?.dislikes?.includes(userData?._id)
-                        ? "text-black"
-                        : "text-white"
-                      }`}
-                  />
-                </div>
-                <span className="text-xs mt-1">{short?.dislikes?.length}</span>
-              </button>
+              ))}
 
               {/* Comment */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  if (openCommentShortId === short._id) {
-                    setOpenCommentShortId(null); // close if same
-                  } else {
-                    setOpenCommentShortId(short._id); // open drawer for this short
-                    setComments((prev) => ({
-                      ...prev,
-                      [short._id]: short.comments || [] // preload old comments if not already loaded
-                    }));
-                  }
+                  setOpenCommentShortId(short._id);
+                  setComments((prev) => ({
+                    ...prev,
+                    [short._id]: short.comments || [],
+                  }));
                 }}
                 className="flex flex-col items-center"
               >
-                <div className="bg-[#00000065] border border-gray-700 p-3 rounded-full hover:bg-gray-700">
-                  <FaComment size={22} className="text-white" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-md">
+                  <FaComment size={18} />
                 </div>
-                <span className="text-xs mt-1">Comment</span>
+                <span className="text-[11px] sm:text-xs mt-1">
+                  {short.comments?.length || 0}
+                </span>
               </button>
-
 
               {/* Download */}
               <button
-                onClick={(e) => handleDownload(e, short.shortUrl, short.title)}
-                className="flex flex-col items-center"
-              >
-                <div className="bg-[#00000065] border border-gray-700 p-3 rounded-full hover:bg-gray-700">
-                  <FaDownload size={22} className="text-white" />
-                </div>
-                <span className="text-xs mt-1">Download</span>
-              </button>
-
-              {/* Save */}
-              <button
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleSave(short._id);
+                  const link = document.createElement("a");
+                  link.href = short.shortUrl;
+                  link.download = short.title || "short.mp4";
+                  link.click();
                 }}
                 className="flex flex-col items-center"
               >
-                <div
-                  className={`${short?.saveBy?.includes(userData?._id)
-                      ? "bg-white"
-                      : "bg-[#00000065] border border-gray-700"
-                    } p-3 rounded-full hover:bg-gray-700`}
-                >
-                  <FaBookmark
-                    size={22}
-                    className={`${short?.saveBy?.includes(userData?._id)
-                        ? "text-black"
-                        : "text-white"
-                      }`}
-                  />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-full bg-black/60 backdrop-blur-md">
+                  <FaDownload size={18} />
                 </div>
-                <span className="text-xs mt-1">{short?.saveBy?.length}</span>
               </button>
             </div>
 
-            {/* Comment Section Drawer */}
-            {openCommentShortId === short._id && (
-              <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-black/95 text-white p-4 rounded-t-2xl overflow-y-auto">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-bold text-lg">Comments</h3>
-                  <button onClick={() => setOpenCommentShortId(null)}>
-                    <FaArrowDown size={20} />
+            {/* Bottom Info */}
+            <div className="absolute bottom-14 md:bottom-0 left-0 right-0 p-4 pb-8 bg-gradient-to-t from-black via-black/70 to-transparent text-white z-20">
+              <div className="flex items-center gap-3 mb-2">
+                <img
+                  src={short.channel?.avatar}
+                  alt=""
+                  className="w-10 h-10 rounded-full border cursor-pointer"
+                  onClick={() => navigate(`/channelpage/${short.channel._id}`)}
+                />
+                <div>
+                  <p className="font-semibold text-sm">
+                    @{short.channel?.name}
+                  </p>
+                  <button
+                    onClick={() => handleSubscribe(short.channel._id)}
+                    className={`text-xs mt-1 px-3 py-1 rounded-full ${
+                      short.channel?.subscribers?.includes(userData?._id)
+                        ? "bg-gray-700"
+                        : "bg-white text-black"
+                    }`}
+                  >
+                    {loadingChannelId === short.channel._id ? (
+                      <ClipLoader size={12} color="gray" />
+                    ) : short.channel?.subscribers?.includes(userData?._id) ? (
+                      "Subscribed"
+                    ) : (
+                      "Subscribe"
+                    )}
                   </button>
                 </div>
+              </div>
 
-                {/* Comment input */}
-                <div className="mt-4 flex gap-2">
+              <h2 className="font-bold text-base line-clamp-2">
+                {short.title}
+              </h2>
+
+              {short.description && (
+                // <p className="text-sm text-gray-300 mt-1 line-clamp-2">
+                //   {short.description}
+
+                // </p>
+                <Description text={short.description} width={50} />
+              )}
+            </div>
+
+            {/* Comments Panel */}
+            {openCommentShortId === short._id && (
+              <div className="absolute bottom-0 left-0 right-0 h-[75%] bg-black/95 p-4 rounded-t-2xl overflow-y-auto text-white z-40">
+                <div className="flex justify-between mb-3">
+                  <h3 className="font-semibold text-lg">Comments</h3>
+                  <FaArrowDown
+                    className="cursor-pointer"
+                    onClick={() => setOpenCommentShortId(null)}
+                  />
+                </div>
+
+                <div className="flex gap-2 mb-4">
                   <input
-                    type="text"
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Add a comment..."
-                    className="flex-1 bg-gray-900 text-white p-2 rounded"
+                    className="flex-1 bg-gray-800 p-2 rounded outline-none"
                   />
                   <button
                     onClick={() => handleAddComment(short._id)}
-                    className="bg-black px-4 py-2  border-1 border-gray-700 rounded-xl"
+                    className="bg-white text-black px-4 rounded"
                   >
                     Post
                   </button>
                 </div>
 
-                {/* Comments list */}
-                <div className="space-y-3 mt-4">
-                  {comments[short._id]?.length > 0 ? (
-                    comments[short._id]
-                      .filter((c) => c && c.message)
-                      .map((comment) => (
-                        <div key={comment._id || Math.random()} className="bg-gray-800/40 p-2 rounded-lg">
-                          {/* Author info */}
-                          <div className="flex items-center gap-2 mb-1">
-                            <img
-                              src={comment?.author?.photoUrl || "/default-avatar.png"}
-                              alt="avatar"
-                              className="w-6 h-6 rounded-full"
-                            />
-                            <span className="text-sm font-semibold">
-                              {comment?.author?.username || "Unknown"}
-                            </span>
-                          </div>
+                {comments[short._id]?.map((c) => (
+                  <div
+                    key={c._id}
+                    className="mb-4 border-b border-gray-800 pb-2"
+                  >
+                    <p className="text-sm font-semibold">
+                      {c.author?.username}
+                    </p>
+                    <p className="text-sm text-gray-300">{c.message}</p>
 
-                          {/* Comment message */}
-                          <p className="text-sm ml-8">{comment.message}</p>
+                    {c.replies?.map((r) => (
+                      <div key={r._id} className="ml-4 mt-2">
+                        <p className="text-xs font-semibold">
+                          {r.author?.username}
+                        </p>
+                        <p className="text-xs text-gray-400">{r.message}</p>
+                      </div>
+                    ))}
 
-                          {/* Reply input */}
-                          <div className="mt-2 ml-8">
-                            <input
-                              type="text"
-                              value={replyText[comment._id] || ""}
-                              onChange={(e) =>
-                                setReplyText((prev) => ({
-                                  ...prev,
-                                  [comment._id]: e.target.value,
-                                }))
-                              }
-                              placeholder="Write a reply..."
-                              className="w-full bg-gray-900 text-white text-sm p-2 rounded"
-                            />
-                            <button
-                              onClick={() => {
-                                handleAddReply(short._id, comment._id, replyText[comment._id]);
-                                setReplyText((prev) => ({ ...prev, [comment._id]: "" })); // clear input
-                              }}
-                              className="mt-1 bg-red-500 px-3 py-1 rounded text-xs"
-                            >
-                              Reply
-                            </button>
-                          </div>
-
-                          {/* Replies list */}
-                          {comment?.replies?.length > 0 && (
-                            <div className="ml-12 mt-2 space-y-2">
-                              {comment.replies
-                                .filter((r) => r && r.message)
-                                .map((r) => (
-                                  <div key={r._id || Math.random()} className="flex items-start gap-2">
-                                    <img
-                                      src={r?.author?.photoUrl || "/default-avatar.png"}
-                                      alt="avatar"
-                                      className="w-5 h-5 rounded-full"
-                                    />
-                                    <div>
-                                      <span className="text-xs font-semibold">
-                                        {r?.author?.username || "Unknown"}
-                                      </span>
-                                      <p className="text-xs text-gray-300 bg-gray-700 p-1 rounded mt-1">
-                                        {r.message}
-                                      </p>
-                                    </div>
-                                  </div>
-                                ))}
-                            </div>
-                          )}
-                        </div>
-                      ))
-                  ) : (
-                    <p className="text-sm text-gray-400">No comments yet.</p>
-                  )}
-                </div>
-
+                    <input
+                      value={replyText[c._id] || ""}
+                      onChange={(e) =>
+                        setReplyText((prev) => ({
+                          ...prev,
+                          [c._id]: e.target.value,
+                        }))
+                      }
+                      placeholder="Reply..."
+                      className="mt-2 w-full bg-gray-800 p-1 rounded text-xs outline-none"
+                    />
+                    <button
+                      onClick={() => handleAddReply(short._id, c._id)}
+                      className="text-xs mt-1 text-blue-400"
+                    >
+                      Reply
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
           </div>
-
-
-
-        </div>
-
-      ))}
+        ))}
+      </div>
     </div>
   );
-
-
-
-
 };
 
 export default WatchShortPage;

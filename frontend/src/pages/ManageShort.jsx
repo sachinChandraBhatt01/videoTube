@@ -16,7 +16,7 @@ const ManageShort = () => {
 
   const { allShortData } = useSelector((state) => state.content);
   const { channelData } = useSelector((state) => state.user);
-
+ 
   const [shortData, setShortData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
