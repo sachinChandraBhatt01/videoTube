@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Route, Routes, Navigate, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import Shorts from "./pages/Shorts";
 import YoutubeSignin from "./pages/YoutubeSignin";
 import CustomAlert, { showCustomAlert } from "./component/CustomAlert";
 import CreateAccount from "./pages/CreateAccount";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import ForgetPassword from "./pages/ForgetPassword";
 import CreateChannelFlow from "./pages/CreateChannelFlow";
 import ViewChannel from "./pages/ViewChannel";

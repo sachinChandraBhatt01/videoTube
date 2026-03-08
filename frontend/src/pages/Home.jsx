@@ -73,6 +73,13 @@ function Home() {
     "Vlogs",
   ];
 
+  const allVideoData = useSelector(
+      (state) => state.content.allVideoData
+    ) || [];
+
+  const { allShortData } = useSelector((state) => state.content) || {};
+    
+
   // 🔊 Speech synthesis
   function speak(message) {
     let utterance = new SpeechSynthesisUtterance(message);
@@ -219,6 +226,9 @@ function Home() {
     setFilterData(null);
     setSearchData(null);
   }
+
+  // console.log("userData:", userData);
+// console.log("allVideoData:", allVideoData);
 
   UseGetSubscribedContent();
 
@@ -517,6 +527,7 @@ function Home() {
             <div className="mt-6">
               <div className="w-full items-center flex justify-center">
                 {loading1 && <ClipLoader size={50} color="white" />}
+                {/* <div>hello</div> */}
               </div>
 
               {/* SEARCH RESULT */}
@@ -530,14 +541,19 @@ function Home() {
               )}
 
               {/* DEFAULT HOME CONTENT */}
-              {!isSearching &&
+              {
+              !isSearching &&
                 !isFiltering &&
-                (userData ? (
+                (userData && userData.length > 0 ? (
                   <RecommendationContent />
                 ) : (
                   <>
-                    <AllVideosPage />
-                    <ShortsPage />
+                    {
+                      allVideoData?.length > 0 ? <AllVideosPage videoData={allVideoData} /> : <div className="text-gray-400 text-center mt-20">No videos available</div>
+                    }
+                    {
+                      allShortData?.length > 0 ? <ShortsPage shortData={allShortData} /> : <div className="text-gray-400 text-center mt-20">No shorts available</div>
+                    }
                   </>
                 ))}
             </div>

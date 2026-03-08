@@ -9,7 +9,7 @@ const contentSlice = createSlice({
         allPostData:null,
         recommendationData:null,
         contentRevenue:null,
-        
+         
         // refresh
         recommendationRefresh:0,
     },

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import VideoCard from "./VideoCard"; // your card component
 
 // Helper to get duration
@@ -18,14 +17,12 @@ const getVideoDuration = (url, callback) => {
   };
 };
 
-const AllVideosPage = () => {
+const AllVideosPage = ({videoData}) => {
   // ✅ Access only the array
-  const allVideoData = useSelector(
-    (state) => state.content.allVideoData
-  ) || [];
+  const allVideoData = videoData || [];
+  // console.log("all video data in component", allVideoData);
 
   const [durations, setDurations] = useState({});
-
   // Get duration for each video
   useEffect(() => {
     if (Array.isArray(allVideoData) && allVideoData?.length > 0) {
@@ -42,19 +39,38 @@ const AllVideosPage = () => {
 
   return (
     <div className="flex flex-wrap gap-6 mb-12">
-      {allVideoData?.map((video) => (
-        <VideoCard
-          key={video._id}
-          thumbnail={video.thumbnail}
-          duration={durations[video._id] || "0:00"}
-          channelLogo={video.channel?.avatar}
-          title={video.title}
-          channelName={video.channel?.name}
-          views={`${video.views}`}
-          time={new Date(video.createdAt).toLocaleDateString()}
-          id={video._id}
-        />
-      ))}
+      {/* {allVideoData?.map((video) => (
+        console.log("video url rendered", video.videoUrl)
+        return (
+      <VideoCard
+        key={video._id}
+        thumbnail={video.thumbnail}
+        duration={durations[video._id] || "0:00"}
+        channelLogo={video.channel?.avatar}
+        title={video.title}
+        channelName={video.channel?.name}
+        views={`${video.views}`}
+        time={new Date(video.createdAt).toLocaleDateString()}
+        id={video._id}
+      />
+      );
+      ))} */}
+      {allVideoData?.map((video) => {
+        // console.log("rendering video", video);
+        return (
+          <VideoCard
+            key={video._id}
+            thumbnail={video.thumbnail}
+            duration={durations[video._id] || "0:00"}
+            channelLogo={video.channel?.avatar}
+            title={video.title}
+            channelName={video.channel?.name}
+            views={`${video.views}`}
+            time={new Date(video.createdAt).toLocaleDateString()}
+            id={video._id}
+          />
+        );
+      })}
     </div>
   );
 };

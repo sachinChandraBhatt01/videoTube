@@ -1,10 +1,9 @@
 import React from "react";
-import { useSelector } from "react-redux";
 import ShortsCard from "./ShortsCard";
 import { SiYoutubeshorts } from "react-icons/si";
 
-const ShortsPage = () => {
-  const { allShortData } = useSelector((state) => state.content) || {};
+const ShortsPage = ({ shortData }) => {
+  const allShortData = shortData || {};
   const latestShorts = allShortData?.slice(0, 10) || [];
 
   return (
@@ -17,18 +16,21 @@ const ShortsPage = () => {
 
       {/* Horizontal scroll with fixed width cards */}
       <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
-        {latestShorts.map((short) => (
-          <div key={short._id} className="flex-shrink-0">
-            <ShortsCard
-              shortUrl={short.shortUrl}
-              title={short.title}
-              channelName={short.channel?.name}
-              views={short.views}
-              id={short?._id}
-              avatar={short.channel?.avatar}
-            />
-          </div>
-        ))}
+        {latestShorts.map((short) => {
+          // console.log("rendering short", short);
+          return (
+            <div key={short._id} className="flex-shrink-0">
+              <ShortsCard
+                shortUrl={short.shortUrl}
+                title={short.title}
+                channelName={short.channel?.name}
+                views={short.views}
+                id={short?._id}
+                avatar={short.channel?.avatar}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
